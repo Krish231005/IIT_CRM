@@ -1,0 +1,6 @@
+{
+  "name": "Retail Analytics & Business Intelligence Platform",
+  "description": "Interactive Enterprise Business Intelligence dashboard with KMeans clustering customer segmentation, Holt-Winters seasonal demand forecasting, collaborative recommendations, and real-time transaction simulation alerts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
