@@ -1,0 +1,915 @@
+{
+  "products": [],
+  "customers": [],
+  "stores": [],
+  "transactions": [],
+  "suppliers": [],
+  "etlLogs": [
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-WIPE-5472",
+      "timestamp": "2026-05-26T06:40:15.472Z",
+      "fileName": "Database Clean Slate",
+      "rowsProcessed": 0,
+      "rowsCleaned": 0,
+      "status": "Success",
+      "summary": "Database cleared completely. Ready to receive clean-slate custom datasets."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-WIPE-5472",
+      "timestamp": "2026-05-26T06:40:15.472Z",
+      "fileName": "Database Clean Slate",
+      "rowsProcessed": 0,
+      "rowsCleaned": 0,
+      "status": "Success",
+      "summary": "Database cleared completely. Ready to receive clean-slate custom datasets."
+    },
+    {
+      "id": "ETL-WIPE-1836",
+      "timestamp": "2026-05-26T06:40:51.836Z",
+      "fileName": "Database Clean Slate",
+      "rowsProcessed": 0,
+      "rowsCleaned": 0,
+      "status": "Success",
+      "summary": "Database cleared completely. Ready to receive clean-slate custom datasets."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-WIPE-5472",
+      "timestamp": "2026-05-26T06:40:15.472Z",
+      "fileName": "Database Clean Slate",
+      "rowsProcessed": 0,
+      "rowsCleaned": 0,
+      "status": "Success",
+      "summary": "Database cleared completely. Ready to receive clean-slate custom datasets."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-001",
+      "timestamp": "2025-11-28T00:00:00.000Z",
+      "fileName": "historical_sales_q1_q2.csv",
+      "rowsProcessed": 3742,
+      "rowsCleaned": 12,
+      "status": "Success",
+      "summary": "Initial core dataset successfully loaded from enterprise storage system."
+    },
+    {
+      "id": "ETL-WIPE-5472",
+      "timestamp": "2026-05-26T06:40:15.472Z",
+      "fileName": "Database Clean Slate",
+      "rowsProcessed": 0,
+      "rowsCleaned": 0,
+      "status": "Success",
+      "summary": "Database cleared completely. Ready to receive clean-slate custom datasets."
+    },
+    {
+      "id": "ETL-WIPE-1836",
+      "timestamp": "2026-05-26T06:40:51.836Z",
+      "fileName": "Database Clean Slate",
+      "rowsProcessed": 0,
+      "rowsCleaned": 0,
+      "status": "Success",
+      "summary": "Database cleared completely. Ready to receive clean-slate custom datasets."
+    },
+    {
+      "id": "ETL-WIPE-0375",
+      "timestamp": "2026-05-26T06:41:10.375Z",
+      "fileName": "Database Clean Slate",
+      "rowsProcessed": 0,
+      "rowsCleaned": 0,
+      "status": "Success",
+      "summary": "Database cleared completely. Ready to receive clean-slate custom datasets."
+    }
+  ],
+  "anomalies": [],
+  "users": [
+    {
+      "id": "USR-001",
+      "name": "Executive Admin",
+      "email": "executive.admin@retailbi.com",
+      "password": "admin",
+      "role": "Admin"
+    },
+    {
+      "id": "USR-002",
+      "name": "Regional Analyst",
+      "email": "regional.analyst@retailbi.com",
+      "password": "analyst",
+      "role": "Analyst"
+    },
+    {
+      "id": "USR-3506",
+      "name": "User",
+      "email": "krishchaudhari76@gmail.com",
+      "password": "@_Kmckmc123",
+      "role": "Admin",
+      "createdAt": "2026-05-26T06:12:53.506Z"
+    },
+    {
+      "id": "USR-001",
+      "name": "Executive Admin",
+      "email": "executive.admin@retailbi.com",
+      "password": "admin",
+      "role": "Admin"
+    },
+    {
+      "id": "USR-002",
+      "name": "Regional Analyst",
+      "email": "regional.analyst@retailbi.com",
+      "password": "analyst",
+      "role": "Analyst"
+    },
+    {
+      "id": "USR-3506",
+      "name": "User",
+      "email": "krishchaudhari76@gmail.com",
+      "password": "@_Kmckmc123",
+      "role": "Admin",
+      "createdAt": "2026-05-26T06:12:53.506Z"
+    },
+    {
+      "id": "USR-001",
+      "name": "Executive Admin",
+      "email": "executive.admin@retailbi.com",
+      "password": "admin",
+      "role": "Admin"
+    },
+    {
+      "id": "USR-002",
+      "name": "Regional Analyst",
+      "email": "regional.analyst@retailbi.com",
+      "password": "analyst",
+      "role": "Analyst"
+    },
+    {
+      "id": "USR-3506",
+      "name": "User",
+      "email": "krishchaudhari76@gmail.com",
+      "password": "@_Kmckmc123",
+      "role": "Admin",
+      "createdAt": "2026-05-26T06:12:53.506Z"
+    },
+    {
+      "id": "USR-001",
+      "name": "Executive Admin",
+      "email": "executive.admin@retailbi.com",
+      "password": "admin",
+      "role": "Admin"
+    },
+    {
+      "id": "USR-002",
+      "name": "Regional Analyst",
+      "email": "regional.analyst@retailbi.com",
+      "password": "analyst",
+      "role": "Analyst"
+    },
+    {
+      "id": "USR-3506",
+      "name": "User",
+      "email": "krishchaudhari76@gmail.com",
+      "password": "@_Kmckmc123",
+      "role": "Admin",
+      "createdAt": "2026-05-26T06:12:53.506Z"
+    },
+    {
+      "id": "USR-001",
+      "name": "Executive Admin",
+      "email": "executive.admin@retailbi.com",
+      "password": "admin",
+      "role": "Admin"
+    },
+    {
+      "id": "USR-002",
+      "name": "Regional Analyst",
+      "email": "regional.analyst@retailbi.com",
+      "password": "analyst",
+      "role": "Analyst"
+    },
+    {
+      "id": "USR-3506",
+      "name": "User",
+      "email": "krishchaudhari76@gmail.com",
+      "password": "@_Kmckmc123",
+      "role": "Admin",
+      "createdAt": "2026-05-26T06:12:53.506Z"
+    },
+    {
+      "id": "USR-001",
+      "name": "Executive Admin",
+      "email": "executive.admin@retailbi.com",
+      "password": "admin",
+      "role": "Admin"
+    },
+    {
+      "id": "USR-002",
+      "name": "Regional Analyst",
+      "email": "regional.analyst@retailbi.com",
+      "password": "analyst",
+      "role": "Analyst"
+    },
+    {
+      "id": "USR-3506",
+      "name": "User",
+      "email": "krishchaudhari76@gmail.com",
+      "password": "@_Kmckmc123",
+      "role": "Admin",
+      "createdAt": "2026-05-26T06:12:53.506Z"
+    },
+    {
+      "id": "USR-001",
+      "name": "Executive Admin",
+      "email": "executive.admin@retailbi.com",
+      "password": "admin",
+      "role": "Admin"
+    },
+    {
+      "id": "USR-002",
+      "name": "Regional Analyst",
+      "email": "regional.analyst@retailbi.com",
+      "password": "analyst",
+      "role": "Analyst"
+    },
+    {
+      "id": "USR-3506",
+      "name": "User",
+      "email": "krishchaudhari76@gmail.com",
+      "password": "@_Kmckmc123",
+      "role": "Admin",
+      "createdAt": "2026-05-26T06:12:53.506Z"
+    },
+    {
+      "id": "USR-001",
+      "name": "Executive Admin",
+      "email": "executive.admin@retailbi.com",
+      "password": "admin",
+      "role": "Admin"
+    },
+    {
+      "id": "USR-002",
+      "name": "Regional Analyst",
+      "email": "regional.analyst@retailbi.com",
+      "password": "analyst",
+      "role": "Analyst"
+    },
+    {
+      "id": "USR-3506",
+      "name": "User",
+      "email": "krishchaudhari76@gmail.com",
+      "password": "@_Kmckmc123",
+      "role": "Admin",
+      "createdAt": "2026-05-26T06:12:53.506Z"
+    },
+    {
+      "id": "USR-001",
+      "name": "Executive Admin",
+      "email": "executive.admin@retailbi.com",
+      "password": "admin",
+      "role": "Admin"
+    },
+    {
+      "id": "USR-002",
+      "name": "Regional Analyst",
+      "email": "regional.analyst@retailbi.com",
+      "password": "analyst",
+      "role": "Analyst"
+    },
+    {
+      "id": "USR-3506",
+      "name": "User",
+      "email": "krishchaudhari76@gmail.com",
+      "password": "@_Kmckmc123",
+      "role": "Admin",
+      "createdAt": "2026-05-26T06:12:53.506Z"
+    },
+    {
+      "id": "USR-001",
+      "name": "Executive Admin",
+      "email": "executive.admin@retailbi.com",
+      "password": "admin",
+      "role": "Admin"
+    },
+    {
+      "id": "USR-002",
+      "name": "Regional Analyst",
+      "email": "regional.analyst@retailbi.com",
+      "password": "analyst",
+      "role": "Analyst"
+    },
+    {
+      "id": "USR-3506",
+      "name": "User",
+      "email": "krishchaudhari76@gmail.com",
+      "password": "@_Kmckmc123",
+      "role": "Admin",
+      "createdAt": "2026-05-26T06:12:53.506Z"
+    },
+    {
+      "id": "USR-001",
+      "name": "Executive Admin",
+      "email": "executive.admin@retailbi.com",
+      "password": "admin",
+      "role": "Admin"
+    },
+    {
+      "id": "USR-002",
+      "name": "Regional Analyst",
+      "email": "regional.analyst@retailbi.com",
+      "password": "analyst",
+      "role": "Analyst"
+    },
+    {
+      "id": "USR-3506",
+      "name": "User",
+      "email": "krishchaudhari76@gmail.com",
+      "password": "@_Kmckmc123",
+      "role": "Admin",
+      "createdAt": "2026-05-26T06:12:53.506Z"
+    },
+    {
+      "id": "USR-001",
+      "name": "Executive Admin",
+      "email": "executive.admin@retailbi.com",
+      "password": "admin",
+      "role": "Admin"
+    },
+    {
+      "id": "USR-002",
+      "name": "Regional Analyst",
+      "email": "regional.analyst@retailbi.com",
+      "password": "analyst",
+      "role": "Analyst"
+    },
+    {
+      "id": "USR-3506",
+      "name": "User",
+      "email": "krishchaudhari76@gmail.com",
+      "password": "@_Kmckmc123",
+      "role": "Admin",
+      "createdAt": "2026-05-26T06:12:53.506Z"
+    }
+  ]
+}

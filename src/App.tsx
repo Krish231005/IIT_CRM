@@ -172,11 +172,11 @@ export default function App() {
 
     switch (activeTab) {
       case 'sales':
-        return <SalesDashboard summary={summary} />;
+        return <SalesDashboard summary={summary} refreshSummary={loadPlatformData} />;
       case 'customers':
-        return <CustomerAnalytics summary={summary} />;
+        return <CustomerAnalytics summary={summary} refreshSummary={loadPlatformData} />;
       case 'inventory':
-        return <InventorySupplyChain />;
+        return <InventorySupplyChain refreshSummary={loadPlatformData} />;
       case 'forecast':
         return <ForecastDemandPanel />;
       case 'realtime':
@@ -184,7 +184,7 @@ export default function App() {
       case 'etl':
         return <DatabaseETLModule />;
       default:
-        return <SalesDashboard summary={summary} />;
+        return <SalesDashboard summary={summary} refreshSummary={loadPlatformData} />;
     }
   };
 

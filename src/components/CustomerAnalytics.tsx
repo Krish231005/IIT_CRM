@@ -1,14 +1,15 @@
-import { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Label } from 'recharts';
 import { Customer, DashboardSummary } from '../types.js';
 import { biApi } from '../lib/api.ts';
-import { UserCheck, RefreshCw, AlertTriangle, Users, Search, HelpCircle } from 'lucide-react';
+import { UserCheck, RefreshCw, AlertTriangle, Users, Search, HelpCircle, PlusCircle, X } from 'lucide-react';
 
 interface CustomerAnalyticsProps {
   summary: DashboardSummary;
+  refreshSummary?: () => void;
 }
 
-export function CustomerAnalytics({ summary }: CustomerAnalyticsProps) {
+export function CustomerAnalytics({ summary, refreshSummary }: CustomerAnalyticsProps) {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [search, setSearch] = useState('');
   const [segment, setSegment] = useState('');
@@ -18,6 +19,46 @@ export function CustomerAnalytics({ summary }: CustomerAnalyticsProps) {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [recs, setRecs] = useState<any[]>([]);
   const [loadingRecs, setLoadingRecs] = useState(false);
+
+  // New CRM manually registered customer state
+  const [showCustForm, setShowCustForm] = useState(false);
+  const [custName, setCustName] = useState('');
+  const [custEmail, setCustEmail] = useState('');
+  const [custSegment, setCustSegment] = useState('New Shoppers');
+  const [custError, setCustError] = useState('');
+  const [custSuccess, setCustSuccess] = useState('');
+  const [custSubmitting, setCustSubmitting] = useState(false);
+
+  const handleCustSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCustError('');
+    setCustSuccess('');
+
+    if (!custName.trim() || !custEmail.trim()) {
+      setCustError('Please configure both the customer Name and corporate business Email.');
+      return;
+    }
+
+    setCustSubmitting(true);
+    try {
+      await biApi.createCustomer({
+        name: custName.trim(),
+        email: custEmail.trim().toLowerCase(),
+        segment: custSegment
+      });
+      setCustSuccess(`Profile for ${custName} registered. Automatically queued Euclidean clustering algorithms!`);
+      setCustName('');
+      setCustEmail('');
+      if (refreshSummary) {
+        refreshSummary();
+      }
+      fetchCustomers();
+    } catch (err: any) {
+      setCustError(err.message || 'Operation failed.');
+    } finally {
+      setCustSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     fetchCustomers();
@@ -260,8 +301,99 @@ export function CustomerAnalytics({ summary }: CustomerAnalyticsProps) {
               <option value="At Risk Churn">At Risk Churn</option>
               <option value="New Shoppers">New Shoppers</option>
             </select>
+
+            <button
+              onClick={() => {
+                setShowCustForm(!showCustForm);
+                setCustError('');
+                setCustSuccess('');
+              }}
+              className="flex items-center gap-1 bg-indigo-600 hover:bg-indigo-700 hover:border-indigo-500 text-xs text-white px-3 py-2 border border-indigo-700 rounded-lg font-bold transition-all cursor-pointer font-mono whitespace-nowrap"
+            >
+              <PlusCircle className="w-4 h-4" />
+              {showCustForm ? 'HIDE CRM FORM' : 'REGISTER CONSUMER'}
+            </button>
           </div>
         </div>
+
+        {/* Collapsible Customer Creation Panel */}
+        {showCustForm && (
+          <div id="customer-registration-panel" className="mb-4 p-4 bg-[#0B1120] border border-indigo-500/30 rounded-xl space-y-3">
+            <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
+              <div>
+                <h4 className="text-xs font-bold text-indigo-400 font-mono tracking-wider uppercase flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+                  CRM Operations: Register Customer Profile
+                </h4>
+                <p className="text-[10.5px] text-slate-400">Add custom shoppers directly into KMeans database registers to execute customized testing operations.</p>
+              </div>
+              <button
+                onClick={() => setShowCustForm(false)}
+                className="text-[9px] uppercase font-bold text-slate-400 hover:text-white bg-slate-800 px-2 py-1 rounded cursor-pointer"
+              >
+                Close Form
+              </button>
+            </div>
+
+            {custSuccess && (
+              <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-lg text-xs font-mono font-semibold">
+                ✔️ {custSuccess}
+              </div>
+            )}
+
+            {custError && (
+              <div className="p-2.5 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-lg text-xs font-mono font-semibold">
+                ⚠️ {custError}
+              </div>
+            )}
+
+            <form onSubmit={handleCustSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
+              <div>
+                <label className="block text-slate-400 text-[9px] font-bold uppercase tracking-wider mb-1 font-mono">Full Customer Name</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Rachel Green"
+                  value={custName}
+                  onChange={(e) => setCustName(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 p-2 text-xs text-white rounded-lg outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-400 text-[9px] font-bold uppercase tracking-wider mb-1 font-mono">Business / Personal Email</label>
+                <input
+                  type="email"
+                  placeholder="rachel@ralphlauren.com"
+                  value={custEmail}
+                  onChange={(e) => setCustEmail(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 p-2 text-xs text-white rounded-lg outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-400 text-[9px] font-bold uppercase tracking-wider mb-1 font-mono">Initial Cohort Segment</label>
+                <select
+                  value={custSegment}
+                  onChange={(e) => setCustSegment(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 p-2 text-xs text-white rounded-lg outline-none cursor-pointer"
+                >
+                  <option value="Champions">Champions (Active High Value)</option>
+                  <option value="Loyal Customers">Loyal Customers (Recurring Shopper)</option>
+                  <option value="At Risk Churn">At Risk Churn (Dormant High Value)</option>
+                  <option value="New Shoppers">New Shoppers (Fresh Account)</option>
+                </select>
+              </div>
+
+              <button
+                type="submit"
+                disabled={custSubmitting}
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-mono font-bold text-xs p-2.5 rounded-lg active:translate-y-0.5 transition uppercase tracking-wider disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                {custSubmitting ? 'REGISTERING...' : 'REGISTER CONSUMER'}
+              </button>
+            </form>
+          </div>
+        )}
 
         {/* Database Table */}
         <div className="overflow-x-auto">

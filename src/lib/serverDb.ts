@@ -150,9 +150,9 @@ export class RetailBIStore {
       const mongoAnomalies = await fetchCol('anomalies');
       const mongoUsers = await fetchCol('users');
 
-      const hasAnyData = mongoProds.length > 0 || mongoCusts.length > 0 || mongoTxns.length > 0 || mongoUsers.length > 0;
+      const isSchemaInitialized = colNames.includes('products') || colNames.includes('customers') || colNames.includes('etlLogs');
 
-      if (hasAnyData) {
+      if (isSchemaInitialized) {
         this.products = mongoProds as Product[];
         this.customers = mongoCusts as Customer[];
         this.stores = mongoStores as Store[];
@@ -176,7 +176,7 @@ export class RetailBIStore {
             role: "Analyst"
           }
         ];
-        console.log(`📥 Hydrated local memory cache with ${this.transactions.length} rows directly from MongoDB!`);
+        console.log(`📥 Hydrated local memory cache with ${this.transactions.length} rows directly from MongoDB (Clean slate or existing)!`);
       } else {
         console.log(`📝 MongoDB collections are empty. Seeding high-fidelity enterprise datasets into Atlas cluster...`);
         this.initializeData();
@@ -961,7 +961,7 @@ export class RetailBIStore {
     const totalRevenue = Math.round(this.transactions.reduce((sum, t) => sum + t.totalPrice, 0));
     const totalCost = this.transactions.reduce((sum, t) => sum + t.cost, 0);
     const totalProfit = Math.round(totalRevenue - totalCost);
-    const profitMargin = Number(((totalProfit / totalRevenue) * 100).toFixed(1));
+    const profitMargin = totalRevenue > 0 ? Number(((totalProfit / totalRevenue) * 100).toFixed(1)) : 0;
     const totalCustomers = this.customers.length;
 
     // Segment Distribution
@@ -1041,13 +1041,13 @@ export class RetailBIStore {
       });
 
       // Default baseline sales if transactions don't fully cover the month gap
-      if (currentMonthSales === 0) {
+      if (currentMonthSales === 0 && this.transactions.length > 0) {
         currentMonthSales = (idx + 1) * 22000 + 44000;
       }
 
       currentMonthSales = Math.round(currentMonthSales);
       // Prior Year is seeded to look like a clean 8.4% annual growth standard
-      const lastYearSales = Math.round(currentMonthSales / 1.084);
+      const lastYearSales = currentMonthSales > 0 ? Math.round(currentMonthSales / 1.084) : 0;
 
       return {
         month,
@@ -1231,6 +1231,9 @@ export class RetailBIStore {
       summary: 'Database cleared completely. Ready to receive clean-slate custom datasets.'
     });
     this.saveToDisk();
+    this.saveToMongo().catch(err => {
+      console.error('❌ Failed syncing wiped slate to MongoDB Atlas directly:', err);
+    });
   }
 
   public resetDemoDatabase() {

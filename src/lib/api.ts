@@ -135,6 +135,34 @@ export const biApi = {
     const res = await fetch(`${API_BASE}/suppliers`);
     return res.json();
   },
+  getStores: async (): Promise<any[]> => {
+    const res = await fetch(`${API_BASE}/stores`);
+    return res.json();
+  },
+  createCustomer: async (cust: { name: string; email: string; segment?: string }): Promise<Customer> => {
+    const res = await fetch(`${API_BASE}/customers`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(cust)
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to register customer profile.');
+    }
+    return res.json();
+  },
+  createTransaction: async (txn: { productId: string; customerId: string; storeId: string; quantity: number }): Promise<any> => {
+    const res = await fetch(`${API_BASE}/transactions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(txn)
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to record transaction checkout.');
+    }
+    return res.json();
+  },
   wipeDatabase: async (): Promise<{ success: boolean; message: string }> => {
     const res = await fetch(`${API_BASE}/database/wipe`, { method: 'POST' });
     return res.json();

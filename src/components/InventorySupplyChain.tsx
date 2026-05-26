@@ -3,7 +3,11 @@ import { Product, Supplier } from '../types.js';
 import { biApi } from '../lib/api.ts';
 import { Package, AlertTriangle, Truck, PlusCircle, Search, Edit2, Trash2, X } from 'lucide-react';
 
-export function InventorySupplyChain() {
+interface InventorySupplyChainProps {
+  refreshSummary?: () => void;
+}
+
+export function InventorySupplyChain({ refreshSummary }: InventorySupplyChainProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [search, setSearch] = useState('');
@@ -107,6 +111,9 @@ export function InventorySupplyChain() {
       }
       setShowModal(false);
       fetchProducts();
+      if (refreshSummary) {
+        refreshSummary();
+      }
     } catch (err: any) {
       setErrorMsg(err.message || 'Failure handling operations request.');
     }
@@ -118,6 +125,9 @@ export function InventorySupplyChain() {
       try {
         await biApi.deleteProduct(id);
         fetchProducts();
+        if (refreshSummary) {
+          refreshSummary();
+        }
       } catch (err) {
         console.error(err);
       }

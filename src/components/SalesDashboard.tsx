@@ -1,15 +1,110 @@
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, Legend } from 'recharts';
 import { DashboardSummary } from '../types.js';
-import { DollarSign, Percent, TrendingUp, ShoppingBag, Eye, MapPin, Layers } from 'lucide-react';
+import { DollarSign, Percent, TrendingUp, ShoppingBag, Eye, MapPin, Layers, ShoppingCart, Users, Play, AlertTriangle } from 'lucide-react';
+import { biApi } from '../lib/api.ts';
 
 interface SalesDashboardProps {
   summary: DashboardSummary;
+  refreshSummary?: () => void;
 }
 
-export function SalesDashboard({ summary }: SalesDashboardProps) {
+export function SalesDashboard({ summary, refreshSummary }: SalesDashboardProps) {
   const [selectedRegion, setSelectedRegion] = useState<string>('All');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
+
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [products, setProducts] = useState<any[]>([]);
+  const [customers, setCustomers] = useState<any[]>([]);
+  const [stores, setStores] = useState<any[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<string>('');
+  const [selectedCustomer, setSelectedCustomer] = useState<string>('');
+  const [selectedStore, setSelectedStore] = useState<string>('');
+  const [units, setUnits] = useState<number>(1);
+  const [loadingCheckoutData, setLoadingCheckoutData] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [checkoutSuccess, setCheckoutSuccess] = useState<string>('');
+  const [checkoutError, setCheckoutError] = useState<string>('');
+
+  useEffect(() => {
+    if (showCheckout) {
+      loadCheckoutData();
+    }
+  }, [showCheckout]);
+
+  const loadCheckoutData = async () => {
+    setLoadingCheckoutData(true);
+    setCheckoutError('');
+    try {
+      const [prodsRes, custsRes, storesRes] = await Promise.all([
+        biApi.getProducts('', '', 1, 150),
+        biApi.getCustomers('', '', 1),
+        biApi.getStores()
+      ]);
+      setProducts(prodsRes.data || []);
+      setCustomers(custsRes.data || []);
+      setStores(storesRes || []);
+      
+      if (prodsRes.data?.length > 0) setSelectedProduct(prodsRes.data[0].id);
+      if (custsRes.data?.length > 0) setSelectedCustomer(custsRes.data[0].id);
+      if (storesRes?.length > 0) setSelectedStore(storesRes[0].id);
+    } catch (err) {
+      console.error(err);
+      setCheckoutError('Failed to synchronize checkout models.');
+    } finally {
+      setLoadingCheckoutData(false);
+    }
+  };
+
+  const activeProductObj = useMemo(() => {
+    return products.find(p => p.id === selectedProduct);
+  }, [products, selectedProduct]);
+
+  const calculations = useMemo(() => {
+    if (!activeProductObj) return null;
+    const rev = activeProductObj.price * units;
+    const cost = activeProductObj.cost * units;
+    const margin = rev - cost;
+    const marginPct = rev > 0 ? Math.round((margin / rev) * 100) : 0;
+    return { rev, cost, margin, marginPct };
+  }, [activeProductObj, units]);
+
+  const handleCheckoutSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCheckoutError('');
+    setCheckoutSuccess('');
+    
+    if (!selectedProduct || !selectedCustomer || !selectedStore || units <= 0) {
+      setCheckoutError('Please populate all mandatory trade checkout fields.');
+      return;
+    }
+
+    const chosenProd = products.find(p => p.id === selectedProduct);
+    if (chosenProd && chosenProd.stock < units) {
+      setCheckoutError(`Insufficient live stock in fulfillment database. Only ${chosenProd.stock} units remaining.`);
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await biApi.createTransaction({
+        productId: selectedProduct,
+        customerId: selectedCustomer,
+        storeId: selectedStore,
+        quantity: units
+      });
+      setCheckoutSuccess(`Successfully registered trade log checking out ${units} units under physical customer ID ${selectedCustomer}.`);
+      setUnits(1);
+      if (refreshSummary) {
+        refreshSummary();
+      }
+      loadCheckoutData();
+    } catch (err: any) {
+      setCheckoutError(err.message || 'Operation failed.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const regions = useMemo(() => ['All', ...Object.keys(summary.regionPerformance)], [summary]);
   const categories = useMemo(() => ['All', ...Object.keys(summary.categoryPerformance)], [summary]);
@@ -96,8 +191,145 @@ export function SalesDashboard({ summary }: SalesDashboardProps) {
               {categories.map(c => <option key={c} value={c} className="bg-slate-900 text-slate-300">{c}</option>)}
             </select>
           </div>
+
+          <button
+            onClick={() => {
+              setShowCheckout(!showCheckout);
+              setCheckoutSuccess('');
+              setCheckoutError('');
+            }}
+            className="flex items-center gap-1 bg-indigo-600 hover:bg-indigo-700 hover:border-indigo-500 text-xs text-white px-3 py-1.5 border border-indigo-700 rounded-lg font-bold transition-all cursor-pointer font-mono whitespace-nowrap"
+          >
+            <ShoppingCart className="w-3.5 h-3.5" />
+            {showCheckout ? 'HIDE RECORD DESK' : 'REGISTER LIVE SALE'}
+          </button>
         </div>
       </div>
+
+      {/* Interactive Operational Checkout Desk Panel */}
+      {showCheckout && (
+        <div id="checkout-console-panel" className="bg-[#111827] border border-cyan-500/30 rounded-xl p-5 space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div>
+              <h3 className="text-xs font-bold text-cyan-400 font-mono tracking-wider uppercase flex items-center gap-1.5">
+                <ShoppingCart className="w-4 h-4 text-cyan-400" />
+                Operations Desk: Trade Checkout Terminal
+              </h3>
+              <p className="text-xs text-slate-400">Directly deduct product stock, record manual sales transaction and update client clustering metrics.</p>
+            </div>
+            <button
+              onClick={() => setShowCheckout(false)}
+              className="px-2.5 py-1 text-[10px] uppercase font-bold text-slate-400 hover:text-white bg-slate-800 border border-slate-700 rounded cursor-pointer"
+            >
+              Close Console
+            </button>
+          </div>
+
+          {checkoutSuccess && (
+            <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-lg text-xs font-semibold font-mono">
+              ✔️ {checkoutSuccess}
+            </div>
+          )}
+
+          {checkoutError && (
+            <div className="p-3 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-lg text-xs font-semibold font-mono">
+              ⚠️ {checkoutError}
+            </div>
+          )}
+
+          {loadingCheckoutData ? (
+            <div className="text-center py-6 text-xs text-slate-500 font-mono">Synchronizing corporate directory entities...</div>
+          ) : (
+            <form onSubmit={handleCheckoutSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+              <div>
+                <label className="block text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 font-mono">Select Product SKU</label>
+                <select
+                  value={selectedProduct}
+                  onChange={(e) => setSelectedProduct(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 p-2 text-xs text-white rounded-lg outline-none cursor-pointer"
+                >
+                  {products.map(p => (
+                    <option key={p.id} value={p.id} className="bg-slate-900">
+                      {p.name} (${p.price} | Stock: {p.stock} left)
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 font-mono">Customer Account</label>
+                <select
+                  value={selectedCustomer}
+                  onChange={(e) => setSelectedCustomer(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 p-2 text-xs text-white rounded-lg outline-none cursor-pointer"
+                >
+                  {customers.map(c => (
+                    <option key={c.id} value={c.id} className="bg-slate-900">
+                      {c.name} ({c.email} | Segment: {c.segment})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 font-mono">Fulfillment Store Branch</label>
+                <select
+                  value={selectedStore}
+                  onChange={(e) => setSelectedStore(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 p-2 text-xs text-white rounded-lg outline-none cursor-pointer"
+                >
+                  {stores.map(s => (
+                    <option key={s.id} value={s.id} className="bg-slate-900">
+                      {s.name} ({s.city})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 font-mono">Quantity</label>
+                  <input
+                    type="number"
+                    value={units}
+                    min="1"
+                    onChange={(e) => setUnits(Math.max(1, parseInt(e.target.value) || 1))}
+                    className="w-full bg-slate-800 border border-slate-700 p-2 text-xs text-white rounded-lg outline-none"
+                  />
+                </div>
+                
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="bg-cyan-600 hover:bg-cyan-700 text-white border border-cyan-650 hover:border-cyan-500 rounded-lg text-xs font-bold leading-none py-3 px-2 text-center uppercase font-mono shadow active:translate-y-0.5 transition cursor-pointer flex items-center justify-center gap-1 disabled:opacity-50"
+                >
+                  {isSubmitting ? 'BILLING...' : 'REGISTER SALE'}
+                </button>
+              </div>
+            </form>
+          )}
+
+          {calculations && !loadingCheckoutData && (
+            <div className="p-3.5 bg-[#0B1120] border border-slate-800 rounded-lg flex flex-wrap items-center justify-between gap-4">
+              <span className="text-[10px] uppercase font-bold text-slate-400 font-mono tracking-wider">PROJECTED TRANSACTION SURPLUS SHEET:</span>
+              <div className="flex flex-wrap items-center gap-5 text-xs font-mono">
+                <div>
+                  <span className="text-slate-500 mr-1.5">Revenue:</span>
+                  <span className="text-emerald-400 font-bold">${calculations.rev.toLocaleString()}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 mr-1.5">COGS:</span>
+                  <span className="text-slate-300">${calculations.cost.toLocaleString()}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 mr-1.5">Operating Margin:</span>
+                  <span className="text-indigo-400 font-bold">${calculations.margin.toLocaleString()} ({calculations.marginPct}%)</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* KPI Cards Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

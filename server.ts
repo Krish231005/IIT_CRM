@@ -302,6 +302,107 @@ async function startServer() {
   });
 
   // ============================================
+  // 3.5 MANUAL ACTIONS (CREATE TRANSACTION AND REGISTER CUSTOMERS)
+  // ============================================
+  // CREATE Customer manually
+  app.post('/api/customers', (req, res) => {
+    try {
+      const { name, email, segment } = req.body;
+      if (!name || !email) {
+        return res.status(400).json({ error: 'Please populate customer name and email.' });
+      }
+      
+      const emailLower = email.toLowerCase().trim();
+      const existingUser = serverDb.customers.find(c => c.email.toLowerCase() === emailLower);
+      if (existingUser) {
+        return res.status(400).json({ error: 'A customer profile is already registered under this email.' });
+      }
+
+      const newCustomer = {
+        id: `CUST-MAN-${Date.now().toString().slice(-4)}`,
+        name: name.trim(),
+        email: emailLower,
+        segment: segment || 'New',
+        recency: 0,
+        frequency: 0,
+        monetary: 0,
+        clv: 0,
+        churnProbability: 5,
+        rfmScore: '311',
+        cluster: 3
+      };
+      
+      serverDb.customers.unshift(newCustomer);
+      serverDb.recomputeAnalytics();
+      serverDb.saveToDisk();
+      res.status(201).json(newCustomer);
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // RECORD/CREATE transaction manually (Register Trade/Sale)
+  app.post('/api/transactions', (req, res) => {
+    try {
+      const { productId, customerId, storeId, quantity } = req.body;
+      if (!productId || !customerId || !storeId || isNaN(quantity)) {
+        return res.status(400).json({ error: 'Missing transaction values: productId, customerId, storeId, and numeric quantity are mandatory.' });
+      }
+
+      const product = serverDb.products.find(p => p.id === productId);
+      const customer = serverDb.customers.find(c => c.id === customerId);
+      const store = serverDb.stores.find(s => s.id === storeId);
+
+      if (!product) {
+        return res.status(404).json({ error: 'Product SKU not found in inventory catalog.' });
+      }
+      if (!customer) {
+        return res.status(404).json({ error: 'Customer Profile not found in directory database.' });
+      }
+      if (!store) {
+        return res.status(404).json({ error: 'Store node not found in routing layout.' });
+      }
+
+      const qty = parseInt(quantity);
+      if (qty <= 0) {
+        return res.status(400).json({ error: 'Quantity must be at least 1 unit.' });
+      }
+
+      // Check stock and decrement it
+      product.stock = Math.max(0, product.stock - qty);
+
+      const totalRevenue = product.price * qty;
+      const totalCost = product.cost * qty;
+      const margin = totalRevenue - totalCost;
+
+      const newTxn = {
+        id: `TXN-MAN-${Date.now().toString().slice(-6)}`,
+        productId: product.id,
+        customerId: customer.id,
+        storeId: store.id,
+        quantity: qty,
+        unitPrice: product.price,
+        totalPrice: totalRevenue,
+        cost: totalCost,
+        margin: margin,
+        timestamp: new Date().toISOString()
+      };
+
+      serverDb.transactions.unshift(newTxn);
+      serverDb.recomputeAnalytics();
+      serverDb.saveToDisk();
+
+      res.status(201).json({
+        success: true,
+        transaction: newTxn,
+        productUpdated: product
+      });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // ============================================
   // 4. LOGISTICAL ANOMALIES & AUDITING
   // ============================================
   app.get('/api/anomalies', (req, res) => {
