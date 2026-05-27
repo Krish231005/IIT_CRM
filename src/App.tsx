@@ -17,7 +17,9 @@ import {
   ArrowLeft,
   Mail,
   Lock,
-  Database
+  Database,
+  Sun,
+  Moon
 } from 'lucide-react';
 
 import { auth, biApi } from './lib/api.ts';
@@ -35,6 +37,20 @@ export default function App() {
   const [token, setToken] = useState<string | null>(auth.getToken());
   const [currentUser, setCurrentUser] = useState<any>(auth.getUser());
   const [activeTab, setActiveTab] = useState<'sales' | 'customers' | 'inventory' | 'forecast' | 'realtime' | 'etl'>('sales');
+
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('retail_bi_theme');
+    return (saved === 'light' || saved === 'dark') ? saved : 'dark';
+  });
+
+  useEffect(() => {
+    if (theme === 'light') {
+      document.documentElement.classList.add('light');
+    } else {
+      document.documentElement.classList.remove('light');
+    }
+    localStorage.setItem('retail_bi_theme', theme);
+  }, [theme]);
 
   // Shared state statistics to speed up navigation
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
@@ -174,15 +190,15 @@ export default function App() {
       case 'sales':
         return <SalesDashboard summary={summary} refreshSummary={loadPlatformData} />;
       case 'customers':
-        return <CustomerAnalytics summary={summary} refreshSummary={loadPlatformData} />;
+        return <CustomerAnalytics summary={summary} refreshSummary={loadPlatformData} currentUserRole={currentUser?.role} />;
       case 'inventory':
-        return <InventorySupplyChain refreshSummary={loadPlatformData} />;
+        return <InventorySupplyChain refreshSummary={loadPlatformData} currentUserRole={currentUser?.role} />;
       case 'forecast':
-        return <ForecastDemandPanel />;
+        return <ForecastDemandPanel currentUserRole={currentUser?.role} />;
       case 'realtime':
         return <RealTimeOperations />;
       case 'etl':
-        return <DatabaseETLModule />;
+        return <DatabaseETLModule currentUserRole={currentUser?.role} />;
       default:
         return <SalesDashboard summary={summary} refreshSummary={loadPlatformData} />;
     }
@@ -211,6 +227,15 @@ export default function App() {
             </div>
 
             <div className="flex items-center gap-4">
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="p-2 border border-slate-800 rounded-xl bg-slate-900/60 hover:bg-slate-850 hover:border-slate-700 text-slate-300 hover:text-white transition duration-200 cursor-pointer flex items-center justify-center"
+                title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+                id="landing-theme-toggle"
+              >
+                {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-400" />}
+              </button>
+
               {token ? (
                 <>
                   <span className="text-xs text-slate-400 font-mono hidden sm:inline">
@@ -585,14 +610,25 @@ export default function App() {
           </div>
 
           {/* Active Operator Badge details */}
-          <div className="p-3 bg-slate-900/60 border border-slate-850 rounded-2xl flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/10 flex items-center justify-center">
-              <User className="w-4 h-4" />
+          <div className="p-3 bg-slate-900/60 border border-slate-850 rounded-2xl flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/10 flex items-center justify-center shrink-0">
+                <User className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <span className="font-semibold text-xs text-slate-200 block truncate">{currentUser?.name}</span>
+                <span className="text-[9px] text-slate-500 font-mono block">{currentUser?.role} Mode</span>
+              </div>
             </div>
-            <div className="min-w-0">
-              <span className="font-semibold text-xs text-slate-200 block truncate">{currentUser?.name}</span>
-              <span className="text-[9px] text-slate-500 font-mono block">{currentUser?.role} Mode</span>
-            </div>
+
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="p-1.5 rounded-lg border border-slate-800 hover:border-slate-750 bg-slate-950/40 hover:bg-slate-900/40 text-slate-450 hover:text-slate-200 transition duration-150 cursor-pointer shrink-0"
+              title={`Switch layout to ${theme === 'dark' ? 'Light' : 'Dark'} mode`}
+              id="dashboard-theme-toggle"
+            >
+              {theme === 'dark' ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-indigo-400" />}
+            </button>
           </div>
 
           {/* Tab lists */}
@@ -605,7 +641,7 @@ export default function App() {
                   onClick={() => setActiveTab(tab.id as any)}
                   className={`w-full flex items-center gap-3 px-3 py-2 text-xs font-medium rounded-xl border transition-all cursor-pointer ${
                     isActive 
-                      ? 'bg-gradient-to-r from-cyan-500/10 to-indigo-500/10 hover:opacity-95 text-transparent bg-clip-text text-white border-slate-800' 
+                      ? 'bg-gradient-to-r from-cyan-500/10 to-indigo-500/10 hover:opacity-95 text-slate-200 border-slate-800 font-semibold' 
                       : 'text-slate-400 border-transparent hover:text-slate-200 hover:bg-slate-900/40'
                   }`}
                 >

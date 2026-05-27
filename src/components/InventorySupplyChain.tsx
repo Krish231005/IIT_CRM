@@ -5,9 +5,10 @@ import { Package, AlertTriangle, Truck, PlusCircle, Search, Edit2, Trash2, X } f
 
 interface InventorySupplyChainProps {
   refreshSummary?: () => void;
+  currentUserRole?: string;
 }
 
-export function InventorySupplyChain({ refreshSummary }: InventorySupplyChainProps) {
+export function InventorySupplyChain({ refreshSummary, currentUserRole }: InventorySupplyChainProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [search, setSearch] = useState('');
@@ -192,13 +193,15 @@ export function InventorySupplyChain({ refreshSummary }: InventorySupplyChainPro
               </div>
 
               {/* CRUD Action Button */}
-              <button
-                onClick={openCreateModal}
-                className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white shadow active:translate-y-0.5 transition cursor-pointer font-mono"
-              >
-                <PlusCircle className="w-4 h-4" />
-                ADD PRODUCT SKU
-              </button>
+              {currentUserRole === 'Admin' && (
+                <button
+                  onClick={openCreateModal}
+                  className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white shadow active:translate-y-0.5 transition cursor-pointer font-mono"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  ADD PRODUCT SKU
+                </button>
+              )}
             </div>
 
             {/* Filter and search bars */}
@@ -251,7 +254,7 @@ export function InventorySupplyChain({ refreshSummary }: InventorySupplyChainPro
                     <th className="p-2.5 font-mono">Retail Price</th>
                     <th className="p-2.5 font-mono">Unit Cost</th>
                     <th className="p-2.5 font-mono">Live Stock</th>
-                    <th className="p-2.5 text-right font-mono">Operations</th>
+                    {currentUserRole === 'Admin' && <th className="p-2.5 text-right font-mono">Operations</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -284,22 +287,24 @@ export function InventorySupplyChain({ refreshSummary }: InventorySupplyChainPro
                             <span className={`font-bold ${isLow ? 'text-rose-400' : 'text-slate-300'}`}>{p.stock}</span>
                             <span className="text-[9px] text-slate-500"> / {p.minRequiredStock} limit</span>
                           </td>
-                          <td className="p-2.5 text-right space-x-1.5 whitespace-nowrap">
-                            <button
-                              onClick={() => openEditModal(p)}
-                              className="inline-flex p-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-300 transition-colors cursor-pointer"
-                              title="Edit item attributes"
-                            >
-                              <Edit2 className="w-3.5 h-3.5" />
-                            </button>
-                            <button
-                              onClick={() => deleteProduct(p.id)}
-                              className="inline-flex p-1.5 bg-slate-800 hover:bg-rose-500/15 border border-slate-700 hover:border-rose-500/30 text-rose-400 rounded-lg transition-colors cursor-pointer"
-                              title="Discontinue item SKU"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </td>
+                          {currentUserRole === 'Admin' && (
+                            <td className="p-2.5 text-right space-x-1.5 whitespace-nowrap">
+                              <button
+                                onClick={() => openEditModal(p)}
+                                className="inline-flex p-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-300 transition-colors cursor-pointer"
+                                title="Edit item attributes"
+                              >
+                                <Edit2 className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                onClick={() => deleteProduct(p.id)}
+                                className="inline-flex p-1.5 bg-slate-800 hover:bg-rose-500/15 border border-slate-700 hover:border-rose-500/30 text-rose-400 rounded-lg transition-colors cursor-pointer"
+                                title="Discontinue item SKU"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </td>
+                          )}
                         </tr>
                       );
                     })

@@ -7,9 +7,10 @@ import { UserCheck, RefreshCw, AlertTriangle, Users, Search, HelpCircle, PlusCir
 interface CustomerAnalyticsProps {
   summary: DashboardSummary;
   refreshSummary?: () => void;
+  currentUserRole?: string;
 }
 
-export function CustomerAnalytics({ summary, refreshSummary }: CustomerAnalyticsProps) {
+export function CustomerAnalytics({ summary, refreshSummary, currentUserRole }: CustomerAnalyticsProps) {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [search, setSearch] = useState('');
   const [segment, setSegment] = useState('');
@@ -335,17 +336,19 @@ export function CustomerAnalytics({ summary, refreshSummary }: CustomerAnalytics
               <option value="Beauty">Beauty</option>
             </select>
 
-            <button
-              onClick={() => {
-                setShowCustForm(!showCustForm);
-                setCustError('');
-                setCustSuccess('');
-              }}
-              className="flex items-center gap-1 bg-indigo-600 hover:bg-indigo-700 hover:border-indigo-500 text-xs text-white px-3 py-2 border border-indigo-700 rounded-lg font-bold transition-all cursor-pointer font-mono whitespace-nowrap"
-            >
-              <PlusCircle className="w-4 h-4" />
-              {showCustForm ? 'HIDE CRM FORM' : 'REGISTER CONSUMER'}
-            </button>
+            {currentUserRole === 'Admin' && (
+              <button
+                onClick={() => {
+                  setShowCustForm(!showCustForm);
+                  setCustError('');
+                  setCustSuccess('');
+                }}
+                className="flex items-center gap-1 bg-indigo-600 hover:bg-indigo-700 hover:border-indigo-500 text-xs text-white px-3 py-2 border border-indigo-700 rounded-lg font-bold transition-all cursor-pointer font-mono whitespace-nowrap"
+              >
+                <PlusCircle className="w-4 h-4" />
+                {showCustForm ? 'HIDE CRM FORM' : 'REGISTER CONSUMER'}
+              </button>
+            )}
           </div>
         </div>
 

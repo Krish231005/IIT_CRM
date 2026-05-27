@@ -3,7 +3,11 @@ import { ETLLog } from '../types.js';
 import { biApi } from '../lib/api.ts';
 import { Database, FileCode, CheckCircle, Upload, Table, Terminal, FileText, CloudLightning, Download, Trash2, RotateCcw, FileSpreadsheet, Info, Check } from 'lucide-react';
 
-export function DatabaseETLModule() {
+interface DatabaseETLModuleProps {
+  currentUserRole?: string;
+}
+
+export function DatabaseETLModule({ currentUserRole }: DatabaseETLModuleProps) {
   const [etlLogs, setEtlLogs] = useState<ETLLog[]>([]);
   const [dragOver, setDragOver] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'parsing' | 'done'>('idle');
@@ -422,8 +426,9 @@ def generate_holt_winters_forecast(series, steps=6):
                 type="file"
                 accept=".csv"
                 id="csvFileIngest"
+                disabled={currentUserRole !== 'Admin'}
                 onChange={handleFileChange}
-                className="absolute inset-0 opacity-0 cursor-pointer"
+                className="absolute inset-0 opacity-0 cursor-pointer disabled:cursor-not-allowed"
               />
 
               {uploadStatus === 'idle' && (
@@ -431,10 +436,21 @@ def generate_holt_winters_forecast(series, steps=6):
                   <div className="p-3 bg-slate-900 rounded-2xl w-fit mx-auto border border-slate-800 text-slate-400">
                     <Table className="w-6 h-6" />
                   </div>
-                  <p className="text-xs font-semibold text-slate-200">
-                    Drag spreadsheet files here or <span className="text-cyan-400 underline">browse computer</span>
-                  </p>
-                  <span className="text-[10px] text-slate-500 block">Accepts .csv formatting containing transactional matrix headings</span>
+                  {currentUserRole === 'Admin' ? (
+                    <>
+                      <p className="text-xs font-semibold text-slate-200">
+                        Drag spreadsheet files here or <span className="text-cyan-400 underline">browse computer</span>
+                      </p>
+                      <span className="text-[10px] text-slate-500 block">Accepts .csv formatting containing transactional matrix headings</span>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-xs font-semibold text-rose-400">
+                        Spreadsheet operations are restricted
+                      </p>
+                      <span className="text-[10px] text-slate-500 block">Corporate Admin role authorization required to run pipeline</span>
+                    </>
+                  )}
                 </div>
               )}
 
@@ -578,23 +594,27 @@ def generate_holt_winters_forecast(series, steps=6):
                 Export JSON Backup
               </button>
               
-              <button
-                onClick={handleResetDb}
-                className="flex items-center gap-1.5 py-2 px-3.5 bg-slate-900 hover:bg-slate-850 text-yellow-500 hover:text-yellow-400 rounded-lg border border-slate-805 text-[11px] font-mono font-medium tracking-tight duration-150 active:translate-y-0.25 cursor-pointer"
-                title="Reset active memory to standard 180-days analytics simulation"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                Restore Seed Baseline
-              </button>
+              {currentUserRole === 'Admin' && (
+                <>
+                  <button
+                    onClick={handleResetDb}
+                    className="flex items-center gap-1.5 py-2 px-3.5 bg-slate-900 hover:bg-slate-850 text-yellow-500 hover:text-yellow-400 rounded-lg border border-slate-805 text-[11px] font-mono font-medium tracking-tight duration-150 active:translate-y-0.25 cursor-pointer"
+                    title="Reset active memory to standard 180-days analytics simulation"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    Restore Seed Baseline
+                  </button>
 
-              <button
-                onClick={handleWipeDb}
-                className="flex items-center gap-1.5 py-2 px-3.5 bg-rose-950/20 hover:bg-rose-950/40 text-rose-400 hover:text-rose-300 rounded-lg border border-rose-500/20 text-[11px] font-mono font-medium tracking-tight duration-150 active:translate-y-0.25 cursor-pointer"
-                title="Instantly empty all catalog, client, and transaction tables"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-                Wipe to Clean Shell
-              </button>
+                  <button
+                    onClick={handleWipeDb}
+                    className="flex items-center gap-1.5 py-2 px-3.5 bg-rose-950/20 hover:bg-rose-950/40 text-rose-400 hover:text-rose-300 rounded-lg border border-rose-500/20 text-[11px] font-mono font-medium tracking-tight duration-150 active:translate-y-0.25 cursor-pointer"
+                    title="Instantly empty all catalog, client, and transaction tables"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    Wipe to Clean Shell
+                  </button>
+                </>
+              )}
             </div>
           </div>
 

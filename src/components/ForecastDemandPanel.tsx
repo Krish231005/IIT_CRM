@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Legend } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Legend, BarChart, Bar, Cell, PieChart, Pie } from 'recharts';
 import { ForecastPoint } from '../types.js';
 import { biApi } from '../lib/api.ts';
-import { Sparkles, Brain, ArrowRight, Hourglass, RefreshCw, AlertCircle } from 'lucide-react';
+import { Sparkles, Brain, ArrowRight, Hourglass, RefreshCw, AlertCircle, TrendingUp, ShoppingBag, Award, Users, BarChart as BarChartIcon, Layers, FileSpreadsheet } from 'lucide-react';
 
 // Light custom Markdown renderer for corporate reports
 function ElegantReportRenderer({ text }: { text: string }) {
@@ -62,9 +62,17 @@ function renderFormattedText(text: string) {
   return parts.map((part, i) => (i % 2 === 1 ? <strong key={i} className="text-white font-semibold">{part}</strong> : part));
 }
 
-export function ForecastDemandPanel() {
+interface ForecastDemandPanelProps {
+  currentUserRole?: string;
+}
+
+export function ForecastDemandPanel({ currentUserRole }: ForecastDemandPanelProps = {}) {
   const [forecast, setForecast] = useState<ForecastPoint[]>([]);
   const [loadingForecast, setLoadingForecast] = useState(false);
+
+  // Corporate backup state for Analyst view
+  const [backupData, setBackupData] = useState<any>(null);
+  const [loadingBackup, setLoadingBackup] = useState(false);
 
   // AI Assistant States
   const [query, setQuery] = useState('');
@@ -72,17 +80,35 @@ export function ForecastDemandPanel() {
   const [loadingAI, setLoadingAI] = useState(false);
   const [currentPromptLabel, setCurrentPromptLabel] = useState('Daily Executive KPI Briefing');
 
+  const fetchBackupData = async () => {
+    setLoadingBackup(true);
+    try {
+      const data = await biApi.exportFullDatabase();
+      setBackupData(data);
+    } catch (err) {
+      console.error('Failed to load corporate backup for intelligence graphs:', err);
+    } finally {
+      setLoadingBackup(false);
+    }
+  };
+
   useEffect(() => {
     fetchForecast();
     // Default initial report seed on load
     runPresetReport('daily-kpi', 'Daily Operational KPI Briefing');
-  }, []);
+    if (currentUserRole === 'Analyst') {
+      fetchBackupData();
+    }
+  }, [currentUserRole]);
 
   const fetchForecast = async () => {
     setLoadingForecast(true);
     try {
       const data = await biApi.getForecast();
       setForecast(data);
+      if (currentUserRole === 'Analyst') {
+        fetchBackupData();
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -128,6 +154,122 @@ export function ForecastDemandPanel() {
     lower: f.lowerConfidence,
     upper: f.upperConfidence
   }));
+
+  // Dynamic calculations for Analyst Dashboard
+  const analystMetrics = React.useMemo(() => {
+    if (!backupData) return null;
+
+    const { products = [], customers = [], transactions = [] } = backupData;
+
+    // 1. Total Revenue
+    const totalRevenue = transactions.reduce((sum: number, t: any) => sum + (t.totalPrice || 0), 0);
+
+    // 2. Total Sales
+    const totalSales = transactions.length;
+
+    // 3. Best Selling Product (by units sold)
+    const productMetrics: Record<string, { name: string; quantity: number; revenue: number }> = {};
+    transactions.forEach((t: any) => {
+      if (!productMetrics[t.productId]) {
+        const prod = products.find((p: any) => p.id === t.productId);
+        productMetrics[t.productId] = { name: prod?.name || 'Unknown Item', quantity: 0, revenue: 0 };
+      }
+      productMetrics[t.productId].quantity += (t.quantity || 0);
+      productMetrics[t.productId].revenue += (t.totalPrice || 0);
+    });
+
+    const productsList = Object.values(productMetrics);
+    const bestSellingProduct = productsList.sort((a, b) => b.quantity - a.quantity)[0]?.name || 'N/A';
+
+    // 4. Top Customer
+    const customerSpend: Record<string, { name: string; email: string; total: number }> = {};
+    transactions.forEach((t: any) => {
+      if (!customerSpend[t.customerId]) {
+         const cust = customers.find((c: any) => c.id === t.customerId);
+         customerSpend[t.customerId] = { name: cust?.name || 'Unknown Client', email: cust?.email || '', total: 0 };
+      }
+      customerSpend[t.customerId].total += (t.totalPrice || 0);
+    });
+
+    const customersList = Object.values(customerSpend);
+    const topCustomer = customersList.sort((a, b) => b.total - a.total)[0]?.name || 'N/A';
+
+    // Top Selling Products (Bar Chart, top 5)
+    const topProductsChart = productsList
+      .sort((a, b) => b.revenue - a.revenue)
+      .slice(0, 5)
+      .map(p => ({
+        name: p.name.length > 20 ? p.name.substring(0, 18) + '...' : p.name,
+        Revenue: Math.round(p.revenue),
+        Quantity: p.quantity
+      }));
+
+    // Monthly Sales Trend / Demand Forecast (Line Chart)
+    const monthsName = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const monthlySales: Record<string, { label: string; offset: number; Revenue: number; Transactions: number }> = {};
+    
+    transactions.forEach((t: any) => {
+      const date = new Date(t.timestamp);
+      const mIdx = date.getMonth();
+      const yr = date.getFullYear();
+      const k = `${yr}-${mIdx}`;
+      if (!monthlySales[k]) {
+        monthlySales[k] = {
+          label: `${monthsName[mIdx]} ${yr}`,
+          offset: yr * 12 + mIdx,
+          Revenue: 0,
+          Transactions: 0
+        };
+      }
+      monthlySales[k].Revenue += (t.totalPrice || 0);
+      monthlySales[k].Transactions += 1;
+    });
+
+    const monthlyTrendChart = Object.values(monthlySales)
+      .sort((a, b) => a.offset - b.offset)
+      .map(m => ({
+        name: m.label,
+        Revenue: Math.round(m.Revenue),
+        Sales: m.Transactions
+      }));
+
+    // Best Customers by Purchase Value (Horizontal Bar Chart)
+    const topCustomersChart = customersList
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 5)
+      .map(c => ({
+        name: c.name.length > 15 ? c.name.substring(0, 13) + '...' : c.name,
+        Spend: Math.round(c.total)
+      }));
+
+    // Category Distribution / share
+    const categoryShare: Record<string, { category: string; value: number }> = {};
+    transactions.forEach((t: any) => {
+      const prod = products.find((p: any) => p.id === t.productId);
+      if (prod) {
+        if (!categoryShare[prod.category]) {
+          categoryShare[prod.category] = { category: prod.category, value: 0 };
+        }
+        categoryShare[prod.category].value += (t.totalPrice || 0);
+      }
+    });
+
+    const categoryShareChart = Object.values(categoryShare).map(cat => ({
+      name: cat.category,
+      value: Math.round(cat.value)
+    }));
+
+    return {
+      totalRevenue,
+      totalSales,
+      bestSellingProduct,
+      topCustomer,
+      topProductsChart,
+      monthlyTrendChart,
+      topCustomersChart,
+      categoryShareChart
+    };
+  }, [backupData]);
 
   return (
     <div id="demand-forecast-section" className="space-y-6">
@@ -273,6 +415,261 @@ export function ForecastDemandPanel() {
           </form>
         </div>
       </div>
+
+      {/* Analyst BI intelligence area */}
+      {currentUserRole === 'Analyst' && (
+        <div className="border-t border-slate-800/80 pt-6 mt-6 space-y-6">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
+            <div>
+              <h2 className="text-xs font-bold text-white tracking-widest uppercase flex items-center gap-2 font-mono">
+                <BarChartIcon className="w-5 h-5 text-indigo-400" />
+                Analyst Insight & Intelligence Hub
+              </h2>
+              <p className="text-xs text-slate-400">
+                High-fidelity role-restricted analytics pipelines synced over CRM, inventory levels and active checkouts.
+              </p>
+            </div>
+            
+            {loadingBackup && (
+              <div className="flex items-center gap-2 text-[10px] text-slate-500 font-mono bg-slate-900 border border-slate-800 px-3 py-1 rounded-full">
+                <Hourglass className="w-3.5 h-3.5 animate-spin text-cyan-400" />
+                Synchronizing datasets...
+              </div>
+            )}
+          </div>
+
+          {/* Fallback when backupData is not fully loaded */}
+          {!analystMetrics ? (
+            <div className="bg-[#111827] border border-slate-800 p-8 rounded-xl text-center text-xs text-slate-500 font-mono">
+              Querying live database snapshots...
+            </div>
+          ) : (
+            <>
+              {/* KPI Cards Row (4 cards) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Total Revenue Card */}
+                <div className="bg-[#111827]/85 border border-slate-800/85 p-4 rounded-xl flex items-center justify-between gap-4">
+                  <div>
+                    <span className="block text-[10px] uppercase font-mono tracking-wider text-slate-500 font-bold">Total Revenue</span>
+                    <span className="block text-lg font-bold text-white font-sans tracking-tight mt-1">
+                      ₹{Math.round(analystMetrics.totalRevenue).toLocaleString()}
+                    </span>
+                    <span className="block text-[9px] text-emerald-450 font-mono mt-0.5">● SYNCHRONIZED</span>
+                  </div>
+                  <div className="p-3 bg-emerald-500/10 text-emerald-400 border border-emerald-500/10 rounded-xl">
+                    <TrendingUp className="w-5 h-5" />
+                  </div>
+                </div>
+
+                {/* Total Sales Card */}
+                <div className="bg-[#111827]/85 border border-slate-800/85 p-4 rounded-xl flex items-center justify-between gap-4">
+                  <div>
+                    <span className="block text-[10px] uppercase font-mono tracking-wider text-slate-500 font-bold">Total Sales Transactions</span>
+                    <span className="block text-lg font-bold text-white font-sans tracking-tight mt-1">
+                      {analystMetrics.totalSales.toLocaleString()} Txns
+                    </span>
+                    <span className="block text-[9px] text-cyan-450 font-mono mt-0.5">● COMPLETED</span>
+                  </div>
+                  <div className="p-3 bg-cyan-500/10 text-cyan-400 border border-cyan-500/10 rounded-xl">
+                    <ShoppingBag className="w-5 h-5" />
+                  </div>
+                </div>
+
+                {/* Best Selling Product SKU */}
+                <div className="bg-[#111827]/85 border border-slate-800/85 p-4 rounded-xl flex items-center justify-between gap-4">
+                  <div className="min-w-0 flex-1">
+                    <span className="block text-[10px] uppercase font-mono tracking-wider text-slate-500 font-bold">Top Selling MVP SKU</span>
+                    <span className="block text-xs font-bold text-white truncate mt-1.5" title={analystMetrics.bestSellingProduct}>
+                      {analystMetrics.bestSellingProduct}
+                    </span>
+                    <span className="block text-[9px] text-indigo-400 font-mono mt-1">● CATEGORY BEST</span>
+                  </div>
+                  <div className="p-3 bg-indigo-500/10 text-indigo-400 border border-indigo-500/10 rounded-xl shrink-0">
+                    <Award className="w-5 h-5" />
+                  </div>
+                </div>
+
+                {/* Top Customer Account */}
+                <div className="bg-[#111827]/85 border border-slate-800/85 p-4 rounded-xl flex items-center justify-between gap-4">
+                  <div className="min-w-0 flex-1">
+                    <span className="block text-[10px] uppercase font-mono tracking-wider text-slate-500 font-bold">Top Value Champion</span>
+                    <span className="block text-xs font-bold text-white truncate mt-1.5" title={analystMetrics.topCustomer}>
+                      {analystMetrics.topCustomer}
+                    </span>
+                    <span className="block text-[9px] text-amber-400 font-mono mt-1">● RETENTION SCORE</span>
+                  </div>
+                  <div className="p-3 bg-amber-500/10 text-amber-400 border border-amber-500/10 rounded-xl shrink-0">
+                    <Users className="w-5 h-5" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Charts Grid (2x2) */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                {/* Graph 1: Top Selling Products (Bar Chart) */}
+                <div className="bg-[#111827] border border-slate-800/80 p-4 rounded-xl">
+                  <div className="mb-4">
+                    <h3 className="text-xs font-bold text-white tracking-widest uppercase flex items-center gap-2 font-mono">
+                      <Layers className="w-4.5 h-4.5 text-indigo-400" />
+                      Top Selling Products Revenue
+                    </h3>
+                    <p className="text-[11px] text-slate-400">Comparison of top 5 trade inventory SKUs based on total currency cashflow.</p>
+                  </div>
+                  <div className="h-64 font-mono text-[11px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={analystMetrics.topProductsChart} margin={{ top: 10, right: 10, left: -10, bottom: 5 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                        <XAxis dataKey="name" stroke="#64748b" tickLine={false} />
+                        <YAxis stroke="#64748b" tickLine={false} tickFormatter={(v) => `₹${v/1000}k`} />
+                        <Tooltip
+                          contentStyle={{ backgroundColor: '#090d16', border: '1px solid #1e293b', borderRadius: '12px' }}
+                          itemStyle={{ fontSize: '11px', padding: '2px 0' }}
+                          formatter={(value: any) => [`₹${(value).toLocaleString()}`, 'Total Revenue']}
+                        />
+                        <Bar dataKey="Revenue" fill="#6366f1" radius={[4, 4, 0, 0]}>
+                          {analystMetrics.topProductsChart.map((entry, index) => {
+                            const colors = ['#6366f1', '#4f46e5', '#818cf8', '#a5b4fc', '#c7d2fe'];
+                            return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />;
+                          })}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                {/* Graph 2: Monthly Sales Trend / Demand Forecast (Line Chart) */}
+                <div className="bg-[#111827] border border-slate-800/80 p-4 rounded-xl">
+                  <div className="mb-4">
+                    <h3 className="text-xs font-bold text-white tracking-widest uppercase flex items-center gap-2 font-mono">
+                      <TrendingUp className="w-4.5 h-4.5 text-cyan-400" />
+                      Monthly Sales & Revenue History
+                    </h3>
+                    <p className="text-[11px] text-slate-400">Sequential aggregated revenue performance mapped across recent months.</p>
+                  </div>
+                  <div className="h-64 font-mono text-[11px]">
+                    {analystMetrics.monthlyTrendChart.length === 0 ? (
+                      <div className="flex h-full items-center justify-center text-slate-500 text-xs text-center font-mono">No monthly trend records detected inside snapshot database.</div>
+                    ) : (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={analystMetrics.monthlyTrendChart} margin={{ top: 10, right: 10, left: -10, bottom: 5 }}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                          <XAxis dataKey="name" stroke="#64748b" tickLine={false} />
+                          <YAxis stroke="#64748b" tickLine={false} tickFormatter={(v) => `₹${v/1000}k`} />
+                          <Tooltip
+                            contentStyle={{ backgroundColor: '#090d16', border: '1px solid #1e293b', borderRadius: '12px' }}
+                            itemStyle={{ fontSize: '11px', padding: '2px 0' }}
+                            formatter={(value: any, name: string) => {
+                              return name === 'Revenue' ? [`₹${(value).toLocaleString()}`, 'Revenue'] : [`${value} Sales`, 'Sales Volume'];
+                            }}
+                          />
+                          <Legend wrapperStyle={{ fontSize: '10px' }} />
+                          <Line type="monotone" dataKey="Revenue" stroke="#06b6d4" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                          <Line type="monotone" dataKey="Sales" stroke="#f59e0b" strokeWidth={2} strokeDasharray="4 4" dot={{ r: 2 }} />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    )}
+                  </div>
+                </div>
+
+                {/* Graph 3: Best Customers by Purchase Value (Horizontal Bar Chart) */}
+                <div className="bg-[#111827] border border-slate-800/80 p-4 rounded-xl">
+                  <div className="mb-4">
+                    <h3 className="text-xs font-bold text-white tracking-widest uppercase flex items-center gap-2 font-mono">
+                      <Users className="w-4.5 h-4.5 text-emerald-400" />
+                      Best Customers by Purchase Value
+                    </h3>
+                    <p className="text-[11px] text-slate-400">Top cumulative high-spending retail profiles currently in KMeans registry.</p>
+                  </div>
+                  <div className="h-64 font-mono text-[11px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        layout="vertical"
+                        data={analystMetrics.topCustomersChart}
+                        margin={{ top: 10, right: 10, left: 10, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" horizontal={false} />
+                        <XAxis type="number" stroke="#64748b" tickLine={false} tickFormatter={(v) => `₹${v/1000}k`} />
+                        <YAxis type="category" dataKey="name" stroke="#64748b" tickLine={false} width={80} />
+                        <Tooltip
+                          contentStyle={{ backgroundColor: '#090d16', border: '1px solid #1e293b', borderRadius: '12px' }}
+                          itemStyle={{ fontSize: '11px', padding: '2px 0' }}
+                          formatter={(value: any) => [`₹${(value).toLocaleString()}`, 'Net Investment']}
+                        />
+                        <Bar dataKey="Spend" fill="#10b981" radius={[0, 4, 4, 0]}>
+                          {analystMetrics.topCustomersChart.map((entry, index) => {
+                            const colors = ['#10b981', '#059669', '#34d399', '#6ee7b7', '#a7f3d0'];
+                            return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />;
+                          })}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                {/* Graph 4: Category Share (Pie/Donut Grid) */}
+                <div className="bg-[#111827] border border-slate-800/80 p-4 rounded-xl">
+                  <div className="mb-4">
+                    <h3 className="text-xs font-bold text-white tracking-widest uppercase flex items-center gap-2 font-mono">
+                      <Layers className="w-4.5 h-4.5 text-amber-500" />
+                      Product Category Sales Share
+                    </h3>
+                    <p className="text-[11px] text-slate-400">Vertical categorical breakdown of actual customer purchase revenues.</p>
+                  </div>
+                  <div className="h-64 font-mono text-[11px] grid grid-cols-1 sm:grid-cols-5 items-center gap-4">
+                    <div className="sm:col-span-3 h-full relative">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={analystMetrics.categoryShareChart}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={55}
+                            outerRadius={75}
+                            paddingAngle={4}
+                            dataKey="value"
+                          >
+                            {analystMetrics.categoryShareChart.map((entry, index) => {
+                              const colors = ['#6366f1', '#06b6d4', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
+                              return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />;
+                            })}
+                          </Pie>
+                          <Tooltip
+                            contentStyle={{ backgroundColor: '#090d16', border: '1px solid #1e293b', borderRadius: '12px' }}
+                            itemStyle={{ fontSize: '11px', padding: '2px 0' }}
+                            formatter={(value: any) => [`₹${(value).toLocaleString()}`, 'Revenue']}
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
+                      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 text-center pointer-events-none">
+                        <span className="block text-[8px] uppercase tracking-wider text-slate-500 font-bold">Total share</span>
+                        <span className="block text-[10px] font-bold text-white">100% Vol</span>
+                      </div>
+                    </div>
+
+                    <div className="sm:col-span-2 space-y-1.5 max-h-56 overflow-y-auto pr-1">
+                      {analystMetrics.categoryShareChart.map((item, idx) => {
+                        const colors = ['#6366f1', '#06b6d4', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
+                        return (
+                          <div key={`legend-${idx}`} className="flex items-center gap-2 p-1.5 rounded-lg bg-slate-900/40 border border-slate-800/40">
+                            <span className="w-2 rounded-full h-2 shrink-0 animate-pulse" style={{ backgroundColor: colors[idx % colors.length] }} />
+                            <div className="min-w-0 flex-1 leading-none">
+                              <span className="block text-[10px] font-bold text-slate-250 truncate">{item.name}</span>
+                              <span className="text-[9px] text-slate-450 font-mono">₹{item.value.toLocaleString()}</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </>
+          )}
+
+        </div>
+      )}
     </div>
   );
 }
