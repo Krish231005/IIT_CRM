@@ -152,7 +152,7 @@ export class RetailBIStore {
 
       const isSchemaInitialized = colNames.includes('products') || colNames.includes('customers') || colNames.includes('etlLogs');
 
-      if (isSchemaInitialized) {
+      if (isSchemaInitialized && mongoProds.length > 0 && mongoTxns.length > 0) {
         this.products = mongoProds as Product[];
         this.customers = mongoCusts as Customer[];
         this.stores = mongoStores as Store[];
@@ -269,6 +269,13 @@ export class RetailBIStore {
         this.anomalies = data.anomalies || [];
         this.users = data.users || [];
         console.log(`💾 Loaded persistent database layout from ${DB_PATH}. Total transactions: ${this.transactions.length}`);
+
+        // Handle edge-case where the JSON file is present but has empty dataset arrays (missing baseline seed)
+        if (this.products.length === 0 || this.transactions.length === 0) {
+          console.log(`⚡ Loaded database arrays are empty or corrupt. Auto-seeding default enterprise datasets...`);
+          this.initializeData();
+          this.saveToDisk();
+        }
       } else {
         console.log(`✨ Database file path not found. Initializing seed parameters on first bootstrap...`);
         this.initializeData();
@@ -388,6 +395,7 @@ export class RetailBIStore {
     };
 
     let prodIdCounter = 100;
+    const initialCategories = ['Electronics', 'Grocery', 'Apparel', 'Home', 'Beauty'];
     Object.entries(productTemplates).forEach(([category, prods]) => {
       const supplier = this.suppliers.find(s => s.category === category) || this.suppliers[0];
       prods.forEach(p => {
@@ -399,7 +407,8 @@ export class RetailBIStore {
           cost: p.cost,
           stock: rng.intRange(40, 500),
           minRequiredStock: rng.intRange(30, 80),
-          supplierId: supplier.id
+          supplierId: supplier.id,
+          region: regions[prodIdCounter % regions.length]
         });
       });
     });
@@ -428,7 +437,9 @@ export class RetailBIStore {
         clv: 0,
         churnProbability: rng.range(10, 95),
         rfmScore: '111',
-        cluster: 0
+        cluster: 0,
+        region: regions[idx % regions.length],
+        preferredCategory: initialCategories[idx % initialCategories.length]
       };
     });
 

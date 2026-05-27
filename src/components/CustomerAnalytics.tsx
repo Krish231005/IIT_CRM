@@ -13,6 +13,8 @@ export function CustomerAnalytics({ summary, refreshSummary }: CustomerAnalytics
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [search, setSearch] = useState('');
   const [segment, setSegment] = useState('');
+  const [filterRegion, setFilterRegion] = useState('');
+  const [filterCategory, setFilterCategory] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -25,6 +27,8 @@ export function CustomerAnalytics({ summary, refreshSummary }: CustomerAnalytics
   const [custName, setCustName] = useState('');
   const [custEmail, setCustEmail] = useState('');
   const [custSegment, setCustSegment] = useState('New Shoppers');
+  const [custRegion, setCustRegion] = useState('West');
+  const [custCategory, setCustCategory] = useState('Electronics');
   const [custError, setCustError] = useState('');
   const [custSuccess, setCustSuccess] = useState('');
   const [custSubmitting, setCustSubmitting] = useState(false);
@@ -44,7 +48,9 @@ export function CustomerAnalytics({ summary, refreshSummary }: CustomerAnalytics
       await biApi.createCustomer({
         name: custName.trim(),
         email: custEmail.trim().toLowerCase(),
-        segment: custSegment
+        segment: custSegment,
+        region: custRegion,
+        preferredCategory: custCategory
       });
       setCustSuccess(`Profile for ${custName} registered. Automatically queued Euclidean clustering algorithms!`);
       setCustName('');
@@ -62,12 +68,12 @@ export function CustomerAnalytics({ summary, refreshSummary }: CustomerAnalytics
 
   useEffect(() => {
     fetchCustomers();
-  }, [search, segment, page]);
+  }, [search, segment, page, filterRegion, filterCategory]);
 
   const fetchCustomers = async () => {
     setLoading(true);
     try {
-      const result = await biApi.getCustomers(search, segment, page);
+      const result = await biApi.getCustomers(search, segment, page, filterRegion, filterCategory);
       setCustomers(result.data);
       setTotalPages(result.pagination.totalPages);
     } catch (err) {
@@ -181,7 +187,7 @@ export function CustomerAnalytics({ summary, refreshSummary }: CustomerAnalytics
                           <p className="text-slate-300 font-semibold text-[11px]">
                             {data.clusterName} • Recency: {data.x}d • Freq: {data.y}tx
                           </p>
-                          <p className="text-emerald-400 font-mono">Monetary Spent: ${data.monetary.toLocaleString()}</p>
+                          <p className="text-emerald-400 font-mono">Monetary Spent: ₹{data.monetary.toLocaleString()}</p>
                         </div>
                       );
                     }
@@ -247,7 +253,7 @@ export function CustomerAnalytics({ summary, refreshSummary }: CustomerAnalytics
                           <span className="text-xs font-semibold text-slate-200 block truncate max-w-[170px]">{p.name}</span>
                           <span className="text-[9px] text-indigo-400 font-mono uppercase">{p.category}</span>
                         </div>
-                        <span className="text-xs font-mono font-bold text-white">${p.price}</span>
+                        <span className="text-xs font-mono font-bold text-white">₹{p.price}</span>
                       </div>
                     ))}
                   </div>
@@ -276,7 +282,7 @@ export function CustomerAnalytics({ summary, refreshSummary }: CustomerAnalytics
             <p className="text-xs text-slate-400">Total list of scanned customer RFM stats, segment clusters, and value profiles.</p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             {/* Search Input */}
             <div className="relative">
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
@@ -285,7 +291,7 @@ export function CustomerAnalytics({ summary, refreshSummary }: CustomerAnalytics
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                 placeholder="Search clients..."
-                className="bg-slate-800 border border-slate-700 rounded-lg pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:border-cyan-500 outline-none w-48 transition-all"
+                className="bg-slate-800 border border-slate-700 rounded-lg pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:border-cyan-500 outline-none w-40 sm:w-48 transition-all"
               />
             </div>
 
@@ -300,6 +306,33 @@ export function CustomerAnalytics({ summary, refreshSummary }: CustomerAnalytics
               <option value="Loyal Customers">Loyal Customers</option>
               <option value="At Risk Churn">At Risk Churn</option>
               <option value="New Shoppers">New Shoppers</option>
+            </select>
+
+            {/* Region select */}
+            <select
+              value={filterRegion}
+              onChange={(e) => { setFilterRegion(e.target.value); setPage(1); }}
+              className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-cyan-500 cursor-pointer"
+            >
+              <option value="">All Regions</option>
+              <option value="Northeast">Northeast</option>
+              <option value="Midwest">Midwest</option>
+              <option value="South">South</option>
+              <option value="West">West</option>
+            </select>
+
+            {/* Category select */}
+            <select
+              value={filterCategory}
+              onChange={(e) => { setFilterCategory(e.target.value); setPage(1); }}
+              className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-cyan-500 cursor-pointer"
+            >
+              <option value="">All Categories</option>
+              <option value="Electronics">Electronics</option>
+              <option value="Grocery">Grocery</option>
+              <option value="Apparel">Apparel</option>
+              <option value="Home">Home</option>
+              <option value="Beauty">Beauty</option>
             </select>
 
             <button
@@ -347,7 +380,7 @@ export function CustomerAnalytics({ summary, refreshSummary }: CustomerAnalytics
               </div>
             )}
 
-            <form onSubmit={handleCustSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
+            <form onSubmit={handleCustSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 items-end">
               <div>
                 <label className="block text-slate-400 text-[9px] font-bold uppercase tracking-wider mb-1 font-mono">Full Customer Name</label>
                 <input
@@ -384,6 +417,35 @@ export function CustomerAnalytics({ summary, refreshSummary }: CustomerAnalytics
                 </select>
               </div>
 
+              <div>
+                <label className="block text-slate-400 text-[9px] font-bold uppercase tracking-wider mb-1 font-mono">Assigned Region</label>
+                <select
+                  value={custRegion}
+                  onChange={(e) => setCustRegion(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 p-2 text-xs text-white rounded-lg outline-none cursor-pointer"
+                >
+                  <option value="Northeast">Northeast</option>
+                  <option value="Midwest">Midwest</option>
+                  <option value="South">South</option>
+                  <option value="West">West</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-slate-400 text-[9px] font-bold uppercase tracking-wider mb-1 font-mono">Preferred Category</label>
+                <select
+                  value={custCategory}
+                  onChange={(e) => setCustCategory(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 p-2 text-xs text-white rounded-lg outline-none cursor-pointer"
+                >
+                  <option value="Electronics">Electronics</option>
+                  <option value="Grocery">Grocery</option>
+                  <option value="Apparel">Apparel</option>
+                  <option value="Home">Home</option>
+                  <option value="Beauty">Beauty</option>
+                </select>
+              </div>
+
               <button
                 type="submit"
                 disabled={custSubmitting}
@@ -401,6 +463,8 @@ export function CustomerAnalytics({ summary, refreshSummary }: CustomerAnalytics
             <thead>
               <tr className="border-b border-slate-850 text-slate-400 text-[10px] font-semibold uppercase font-mono bg-[#0B1120]">
                 <th className="p-2.5">Customer Profile</th>
+                <th className="p-2.5">Region</th>
+                <th className="p-2.5">Fav Category</th>
                 <th className="p-2.5">Recency</th>
                 <th className="p-2.5">Frequency</th>
                 <th className="p-2.5">Monetary</th>
@@ -412,11 +476,11 @@ export function CustomerAnalytics({ summary, refreshSummary }: CustomerAnalytics
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="text-center py-6 text-slate-500 font-mono text-[10px]">Querying database records...</td>
+                  <td colSpan={9} className="text-center py-6 text-slate-500 font-mono text-[10px]">Querying database records...</td>
                 </tr>
               ) : customers.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="text-center py-6 text-slate-500">No customers found matching queries.</td>
+                  <td colSpan={9} className="text-center py-6 text-slate-500">No customers found matching queries.</td>
                 </tr>
               ) : (
                 customers.map((c) => (
@@ -431,10 +495,12 @@ export function CustomerAnalytics({ summary, refreshSummary }: CustomerAnalytics
                         <span className="text-[10px] text-slate-500 font-mono block">{c.email}</span>
                       </div>
                     </td>
+                    <td className="p-2.5 text-slate-300 font-mono">{c.region || 'West'}</td>
+                    <td className="p-2.5 text-slate-300 font-mono">{c.preferredCategory || 'Electronics'}</td>
                     <td className="p-2.5 text-slate-300 font-mono">{c.recency} days</td>
                     <td className="p-2.5 text-slate-300 font-mono">{c.frequency} checkouts</td>
-                    <td className="p-2.5 text-white font-mono font-semibold">${c.monetary.toLocaleString()}</td>
-                    <td className="p-2.5 text-cyan-400 font-mono font-semibold">${c.clv.toLocaleString()}</td>
+                    <td className="p-2.5 text-white font-mono font-semibold">₹{c.monetary.toLocaleString()}</td>
+                    <td className="p-2.5 text-cyan-400 font-mono font-semibold">₹{c.clv.toLocaleString()}</td>
                     <td className="p-2.5">
                       <span className={`inline-block py-0.5 px-2 rounded text-[10px] font-semibold text-center ${
                         c.cluster === 0 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :

@@ -7,6 +7,7 @@ export interface Product {
   stock: number;
   minRequiredStock: number;
   supplierId: string;
+  region?: 'Northeast' | 'Midwest' | 'South' | 'West';
 }
 
 export interface Customer {
@@ -21,6 +22,8 @@ export interface Customer {
   churnProbability: number; // 0 to 100%
   rfmScore: string; // e.g. "445"
   cluster: number; // KMeans cluster number
+  region?: 'Northeast' | 'Midwest' | 'South' | 'West';
+  preferredCategory?: string;
 }
 
 export interface Store {

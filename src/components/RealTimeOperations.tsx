@@ -155,7 +155,7 @@ export function RealTimeOperations() {
                     </div>
 
                     <div className="text-right">
-                      <span className="font-mono text-xs font-bold text-white">+${txn.totalPrice.toLocaleString()}</span>
+                      <span className="font-mono text-xs font-bold text-white">+₹{txn.totalPrice.toLocaleString()}</span>
                       <span className="text-[9px] text-slate-500 block">{new Date(txn.timestamp).toLocaleTimeString()}</span>
                     </div>
                   </div>

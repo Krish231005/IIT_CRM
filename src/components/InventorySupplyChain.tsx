@@ -12,6 +12,7 @@ export function InventorySupplyChain({ refreshSummary }: InventorySupplyChainPro
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
+  const [filterRegion, setFilterRegion] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -21,6 +22,7 @@ export function InventorySupplyChain({ refreshSummary }: InventorySupplyChainPro
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formName, setFormName] = useState('');
   const [formCategory, setFormCategory] = useState('Electronics');
+  const [formRegion, setFormRegion] = useState<'Northeast' | 'Midwest' | 'South' | 'West'>('West');
   const [formPrice, setFormPrice] = useState('');
   const [formCost, setFormCost] = useState('');
   const [formStock, setFormStock] = useState('');
@@ -31,12 +33,12 @@ export function InventorySupplyChain({ refreshSummary }: InventorySupplyChainPro
   useEffect(() => {
     fetchProducts();
     fetchSuppliers();
-  }, [search, category, page]);
+  }, [search, category, page, filterRegion]);
 
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const result = await biApi.getProducts(search, category, page, 6);
+      const result = await biApi.getProducts(search, category, page, 6, filterRegion);
       setProducts(result.data);
       setTotalPages(result.pagination.totalPages);
     } catch (err) {
@@ -61,6 +63,7 @@ export function InventorySupplyChain({ refreshSummary }: InventorySupplyChainPro
     setEditingId(null);
     setFormName('');
     setFormCategory('Electronics');
+    setFormRegion('West');
     setFormPrice('199');
     setFormCost('85');
     setFormStock('100');
@@ -75,6 +78,7 @@ export function InventorySupplyChain({ refreshSummary }: InventorySupplyChainPro
     setEditingId(p.id);
     setFormName(p.name);
     setFormCategory(p.category);
+    setFormRegion(p.region || 'West');
     setFormPrice(p.price.toString());
     setFormCost(p.cost.toString());
     setFormStock(p.stock.toString());
@@ -100,7 +104,8 @@ export function InventorySupplyChain({ refreshSummary }: InventorySupplyChainPro
       cost: parseFloat(formCost),
       stock: parseInt(formStock),
       minRequiredStock: parseInt(formMinStock) || 50,
-      supplierId: formSupplierId || 'SUP-101'
+      supplierId: formSupplierId || 'SUP-101',
+      region: formRegion
     };
 
     try {
@@ -204,7 +209,7 @@ export function InventorySupplyChain({ refreshSummary }: InventorySupplyChainPro
                   type="text"
                   value={search}
                   onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                  placeholder="Filter by SKU or key title..."
+                  placeholder="Filter by SKU..."
                   className="bg-slate-800 border border-slate-700 rounded-lg pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:border-cyan-500 outline-none w-full transition-all"
                 />
               </div>
@@ -221,6 +226,18 @@ export function InventorySupplyChain({ refreshSummary }: InventorySupplyChainPro
                 <option value="Home">Home</option>
                 <option value="Beauty">Beauty</option>
               </select>
+
+              <select
+                value={filterRegion}
+                onChange={(e) => { setFilterRegion(e.target.value); setPage(1); }}
+                className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white outline-none cursor-pointer"
+              >
+                <option value="">All Regions</option>
+                <option value="Northeast">Northeast</option>
+                <option value="Midwest">Midwest</option>
+                <option value="South">South</option>
+                <option value="West">West</option>
+              </select>
             </div>
 
             {/* Catalog Table */}
@@ -230,6 +247,7 @@ export function InventorySupplyChain({ refreshSummary }: InventorySupplyChainPro
                   <tr className="border-b border-slate-850 text-slate-400 font-mono text-[10px] bg-[#0B1120] uppercase">
                     <th className="p-2.5">SKU details</th>
                     <th className="p-2.5">Category</th>
+                    <th className="p-2.5">Warehouse Region</th>
                     <th className="p-2.5 font-mono">Retail Price</th>
                     <th className="p-2.5 font-mono">Unit Cost</th>
                     <th className="p-2.5 font-mono">Live Stock</th>
@@ -239,11 +257,11 @@ export function InventorySupplyChain({ refreshSummary }: InventorySupplyChainPro
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan={6} className="text-center py-6 text-slate-500 font-mono">Querying inventory databases...</td>
+                      <td colSpan={7} className="text-center py-6 text-slate-500 font-mono">Querying inventory databases...</td>
                     </tr>
                   ) : products.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="text-center py-6 text-slate-500">No matching products found.</td>
+                      <td colSpan={7} className="text-center py-6 text-slate-500">No matching products found.</td>
                     </tr>
                   ) : (
                     products.map((p) => {
@@ -252,15 +270,16 @@ export function InventorySupplyChain({ refreshSummary }: InventorySupplyChainPro
                         <tr key={p.id} className="border-b border-slate-850 hover:bg-slate-800/10">
                           <td className="p-2.5">
                             <div>
-                              <span className="font-semibold text-slate-200 block truncate max-w-[170px]">{p.name}</span>
-                              <span className="text-[9px] text-slate-500 font-mono">{p.id}</span>
+                               <span className="font-semibold text-slate-200 block truncate max-w-[170px]">{p.name}</span>
+                               <span className="text-[9px] text-slate-500 font-mono">{p.id}</span>
                             </div>
                           </td>
                           <td className="p-2.5">
                             <span className="text-[10px] bg-slate-800 border border-slate-700 px-2 py-0.5 rounded text-slate-350 font-semibold font-mono">{p.category}</span>
                           </td>
-                          <td className="p-2.5 text-white font-semibold font-mono">${p.price}</td>
-                          <td className="p-2.5 text-slate-450 font-mono">${p.cost}</td>
+                          <td className="p-2.5 text-slate-350 font-mono text-[10px]">{p.region || 'West'}</td>
+                          <td className="p-2.5 text-white font-semibold font-mono">₹{p.price}</td>
+                          <td className="p-2.5 text-slate-450 font-mono">₹{p.cost}</td>
                           <td className="p-2.5 font-mono">
                             <span className={`font-bold ${isLow ? 'text-rose-400' : 'text-slate-300'}`}>{p.stock}</span>
                             <span className="text-[9px] text-slate-500"> / {p.minRequiredStock} limit</span>
@@ -404,6 +423,20 @@ export function InventorySupplyChain({ refreshSummary }: InventorySupplyChainPro
                 />
               </div>
 
+              <div>
+                <label className="block text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1 font-mono">Warehouse Storage Region</label>
+                <select
+                  value={formRegion}
+                  onChange={(e) => setFormRegion(e.target.value as any)}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white outline-none cursor-pointer"
+                >
+                  <option value="Northeast">Northeast Region</option>
+                  <option value="Midwest">Midwest Region</option>
+                  <option value="South">South Region</option>
+                  <option value="West">West Region</option>
+                </select>
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1 font-mono">Vertical Category</label>
@@ -436,7 +469,7 @@ export function InventorySupplyChain({ refreshSummary }: InventorySupplyChainPro
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1 font-mono">Unit Retail Price ($)</label>
+                  <label className="block text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1 font-mono">Unit Retail Price (₹)</label>
                   <input
                     type="number"
                     value={formPrice}
@@ -447,7 +480,7 @@ export function InventorySupplyChain({ refreshSummary }: InventorySupplyChainPro
                 </div>
 
                 <div>
-                  <label className="block text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1 font-mono">Unit Cost ($)</label>
+                  <label className="block text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1 font-mono">Unit Cost (₹)</label>
                   <input
                     type="number"
                     value={formCost}

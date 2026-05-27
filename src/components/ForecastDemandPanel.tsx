@@ -167,15 +167,15 @@ export function ForecastDemandPanel() {
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
                     <XAxis dataKey="name" stroke="#64748b" fontSize={11} tickLine={false} />
-                    <YAxis stroke="#64748b" fontSize={11} tickFormatter={(v) => `$${v/1000}k`} tickLine={false} />
+                    <YAxis stroke="#64748b" fontSize={11} tickFormatter={(v) => `₹${v/1000}k`} tickLine={false} />
                     <Tooltip
                       contentStyle={{ backgroundColor: '#090d16', border: '1px solid #1e293b', borderRadius: '12px' }}
                       itemStyle={{ fontSize: '11px', padding: '2px 0' }}
                       formatter={(val: number | null, name: string) => {
                         if (val === null) return null;
-                        if (name === 'lower' || name === 'upper') return [`$${Math.round(val).toLocaleString()}`, name === 'lower' ? '95% Bottom Confidence' : '95% Top Confidence'];
-                        if (name === 'actual') return [`$${Math.round(val).toLocaleString()}`, 'Log Sales'];
-                        return [`$${Math.round(val).toLocaleString()}`, 'Predicted Demand'];
+                        if (name === 'lower' || name === 'upper') return [`₹${Math.round(val).toLocaleString()}`, name === 'lower' ? '95% Bottom Confidence' : '95% Top Confidence'];
+                        if (name === 'actual') return [`₹${Math.round(val).toLocaleString()}`, 'Log Sales'];
+                        return [`₹${Math.round(val).toLocaleString()}`, 'Predicted Demand'];
                       }}
                     />
                     <Legend iconType="circle" wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />

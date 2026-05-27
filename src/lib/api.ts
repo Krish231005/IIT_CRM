@@ -52,12 +52,12 @@ export const biApi = {
     const res = await fetch(`${API_BASE}/dashboard/forecast`);
     return res.json();
   },
-  getCustomers: async (search = '', segment = '', page = 1): Promise<{ data: Customer[]; pagination: any }> => {
-    const res = await fetch(`${API_BASE}/customers?search=${encodeURIComponent(search)}&segment=${encodeURIComponent(segment)}&page=${page}`);
+  getCustomers: async (search = '', segment = '', page = 1, region = '', preferredCategory = ''): Promise<{ data: Customer[]; pagination: any }> => {
+    const res = await fetch(`${API_BASE}/customers?search=${encodeURIComponent(search)}&segment=${encodeURIComponent(segment)}&region=${encodeURIComponent(region)}&preferredCategory=${encodeURIComponent(preferredCategory)}&page=${page}`);
     return res.json();
   },
-  getProducts: async (search = '', category = '', page = 1, limit = 8): Promise<{ data: Product[]; pagination: any }> => {
-    const res = await fetch(`${API_BASE}/products?search=${encodeURIComponent(search)}&category=${encodeURIComponent(category)}&page=${page}&limit=${limit}`);
+  getProducts: async (search = '', category = '', page = 1, limit = 8, region = ''): Promise<{ data: Product[]; pagination: any }> => {
+    const res = await fetch(`${API_BASE}/products?search=${encodeURIComponent(search)}&category=${encodeURIComponent(category)}&region=${encodeURIComponent(region)}&page=${page}&limit=${limit}`);
     return res.json();
   },
   createProduct: async (prod: Omit<Product, 'id'>): Promise<Product> => {
@@ -139,7 +139,7 @@ export const biApi = {
     const res = await fetch(`${API_BASE}/stores`);
     return res.json();
   },
-  createCustomer: async (cust: { name: string; email: string; segment?: string }): Promise<Customer> => {
+  createCustomer: async (cust: { name: string; email: string; segment?: string; region?: string; preferredCategory?: string }): Promise<Customer> => {
     const res = await fetch(`${API_BASE}/customers`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, Legend } from 'recharts';
 import { DashboardSummary } from '../types.js';
-import { DollarSign, Percent, TrendingUp, ShoppingBag, Eye, MapPin, Layers, ShoppingCart, Users, Play, AlertTriangle } from 'lucide-react';
+import { IndianRupee, Percent, TrendingUp, ShoppingBag, Eye, MapPin, Layers, ShoppingCart, Users, Play, AlertTriangle } from 'lucide-react';
 import { biApi } from '../lib/api.ts';
 
 interface SalesDashboardProps {
@@ -250,7 +250,7 @@ export function SalesDashboard({ summary, refreshSummary }: SalesDashboardProps)
                 >
                   {products.map(p => (
                     <option key={p.id} value={p.id} className="bg-slate-900">
-                      {p.name} (${p.price} | Stock: {p.stock} left)
+                      {p.name} (₹{p.price} | Stock: {p.stock} left)
                     </option>
                   ))}
                 </select>
@@ -315,15 +315,15 @@ export function SalesDashboard({ summary, refreshSummary }: SalesDashboardProps)
               <div className="flex flex-wrap items-center gap-5 text-xs font-mono">
                 <div>
                   <span className="text-slate-500 mr-1.5">Revenue:</span>
-                  <span className="text-emerald-400 font-bold">${calculations.rev.toLocaleString()}</span>
+                  <span className="text-emerald-400 font-bold">₹{calculations.rev.toLocaleString()}</span>
                 </div>
                 <div>
                   <span className="text-slate-500 mr-1.5">COGS:</span>
-                  <span className="text-slate-300">${calculations.cost.toLocaleString()}</span>
+                  <span className="text-slate-300">₹{calculations.cost.toLocaleString()}</span>
                 </div>
                 <div>
                   <span className="text-slate-500 mr-1.5">Operating Margin:</span>
-                  <span className="text-indigo-400 font-bold">${calculations.margin.toLocaleString()} ({calculations.marginPct}%)</span>
+                  <span className="text-indigo-400 font-bold">₹{calculations.margin.toLocaleString()} ({calculations.marginPct}%)</span>
                 </div>
               </div>
             </div>
@@ -334,8 +334,8 @@ export function SalesDashboard({ summary, refreshSummary }: SalesDashboardProps)
       {/* KPI Cards Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { id: 'kpi-revenue', title: 'Global Operations Revenue', val: `$${kpis.revenue.toLocaleString()}`, icon: DollarSign, pct: '+14.2%', desc: 'vs prior year q2', color: 'text-emerald-400' },
-          { id: 'kpi-profit', title: 'Gross Profit Balance', val: `$${kpis.profit.toLocaleString()}`, icon: TrendingUp, pct: '+9.4%', desc: 'recomputed net surplus', color: 'text-indigo-400' },
+          { id: 'kpi-revenue', title: 'Global Operations Revenue', val: `₹${kpis.revenue.toLocaleString()}`, icon: IndianRupee, pct: '+14.2%', desc: 'vs prior year q2', color: 'text-emerald-400' },
+          { id: 'kpi-profit', title: 'Gross Profit Balance', val: `₹${kpis.profit.toLocaleString()}`, icon: TrendingUp, pct: '+9.4%', desc: 'recomputed net surplus', color: 'text-indigo-400' },
           { id: 'kpi-margin', title: 'System Operating Margin', val: `${kpis.margin}%`, icon: Percent, pct: 'Stable', desc: 'weighted cost margin', color: 'text-cyan-400' },
           { id: 'kpi-transactions', title: 'Operational Log Volume', val: kpis.transactions.toLocaleString(), icon: ShoppingBag, pct: '+11.8%', desc: 'unique logged checkouts', color: 'text-amber-400' }
         ].map((card, i) => (
@@ -389,12 +389,12 @@ export function SalesDashboard({ summary, refreshSummary }: SalesDashboardProps)
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
                 <XAxis dataKey="month" stroke="#64748b" fontSize={11} tickLine={false} />
-                <YAxis stroke="#64748b" fontSize={11} tickFormatter={(val) => `$${val/1000}k`} tickLine={false} />
+                <YAxis stroke="#64748b" fontSize={11} tickFormatter={(val) => `₹${val/1000}k`} tickLine={false} />
                 <Tooltip
                   contentStyle={{ backgroundColor: '#090d16', border: '1px solid #1e293b', borderRadius: '12px' }}
                   labelStyle={{ color: '#94a3b8', fontSize: '11px', fontWeight: 'bold' }}
                   itemStyle={{ fontSize: '12px', padding: '2px 0' }}
-                  formatter={(val: number) => [`$${val.toLocaleString()}`, '']}
+                  formatter={(val: number) => [`₹${val.toLocaleString()}`, '']}
                 />
                 <Area type="monotone" dataKey="currentYear" stroke="#06b6d4" strokeWidth={2.5} fillOpacity={1} fill="url(#colorCY)" />
                 <Area type="monotone" dataKey="lastYear" stroke="#475569" strokeWidth={1.5} strokeDasharray="5 5" fill="none" />
@@ -421,7 +421,7 @@ export function SalesDashboard({ summary, refreshSummary }: SalesDashboardProps)
                 <div key={reg.name} className="space-y-1.5">
                   <div className="flex justify-between text-xs font-semibold">
                     <span className="text-slate-300">{reg.name} Region</span>
-                    <span className="text-white font-mono">${reg.revenue.toLocaleString()}</span>
+                    <span className="text-white font-mono">₹{reg.revenue.toLocaleString()}</span>
                   </div>
                   <div className="w-full bg-[#0B1120] h-2 rounded overflow-hidden border border-slate-800">
                     <div
@@ -457,11 +457,11 @@ export function SalesDashboard({ summary, refreshSummary }: SalesDashboardProps)
               <BarChart data={categoryChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
                 <XAxis dataKey="name" stroke="#64748b" fontSize={11} tickLine={false} />
-                <YAxis stroke="#64748b" fontSize={11} tickFormatter={(val) => `$${val/1000}k`} tickLine={false} />
+                <YAxis stroke="#64748b" fontSize={11} tickFormatter={(val) => `₹${val/1000}k`} tickLine={false} />
                 <Tooltip
                   contentStyle={{ backgroundColor: '#090d16', border: '1px solid #1e293b', borderRadius: '12px' }}
                   itemStyle={{ fontSize: '11px' }}
-                  formatter={(val: number) => [`$${val.toLocaleString()}`, '']}
+                  formatter={(val: number) => [`₹${val.toLocaleString()}`, '']}
                 />
                 <Legend iconType="circle" wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
                 <Bar dataKey="revenue" name="Total Revenue" radius={[4, 4, 0, 0]}>
@@ -496,7 +496,7 @@ export function SalesDashboard({ summary, refreshSummary }: SalesDashboardProps)
                   <span className="text-[10px] text-slate-400 font-mono mt-0.5 block">{p.category}</span>
                 </div>
                 <div className="text-right">
-                  <span className="font-mono text-xs font-bold text-white">${p.revenue.toLocaleString()}</span>
+                  <span className="font-mono text-xs font-bold text-white">₹{p.revenue.toLocaleString()}</span>
                   <span className="text-[10px] text-slate-500 block">Qty: {p.quantity}</span>
                 </div>
               </div>

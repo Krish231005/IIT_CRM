@@ -159,6 +159,8 @@ async function startServer() {
     try {
       const search = (req.query.search as string || '').toLowerCase();
       const segment = req.query.segment as string || '';
+      const region = req.query.region as string || '';
+      const preferredCategory = req.query.preferredCategory as string || '';
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 8;
 
@@ -169,6 +171,12 @@ async function startServer() {
       }
       if (segment) {
         filtered = filtered.filter(c => c.segment === segment);
+      }
+      if (region) {
+        filtered = filtered.filter(c => c.region === region);
+      }
+      if (preferredCategory) {
+        filtered = filtered.filter(c => c.preferredCategory === preferredCategory);
       }
 
       const total = filtered.length;
@@ -194,6 +202,7 @@ async function startServer() {
     try {
       const search = (req.query.search as string || '').toLowerCase();
       const category = req.query.category as string || '';
+      const region = req.query.region as string || '';
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 8;
 
@@ -204,6 +213,9 @@ async function startServer() {
       }
       if (category) {
         filtered = filtered.filter(p => p.category === category);
+      }
+      if (region) {
+        filtered = filtered.filter(p => p.region === region);
       }
 
       const total = filtered.length;
@@ -227,7 +239,7 @@ async function startServer() {
   // CREATE Product
   app.post('/api/products', (req, res) => {
     try {
-      const { name, category, price, cost, stock, minRequiredStock, supplierId } = req.body;
+      const { name, category, price, cost, stock, minRequiredStock, supplierId, region } = req.body;
 
       if (!name || !category || isNaN(price) || isNaN(cost) || isNaN(stock)) {
         return res.status(400).json({ error: 'Please populate all product fields correctly.' });
@@ -241,7 +253,8 @@ async function startServer() {
         cost: Number(cost),
         stock: Number(stock),
         minRequiredStock: Number(minRequiredStock) || 50,
-        supplierId: supplierId || 'SUP-101'
+        supplierId: supplierId || 'SUP-101',
+        region: region || 'West'
       };
 
       serverDb.products.unshift(newProduct);
@@ -257,7 +270,7 @@ async function startServer() {
   app.put('/api/products/:id', (req, res) => {
     try {
       const { id } = req.params;
-      const { name, category, price, cost, stock, minRequiredStock } = req.body;
+      const { name, category, price, cost, stock, minRequiredStock, region } = req.body;
 
       const idx = serverDb.products.findIndex(p => p.id === id);
       if (idx === -1) {
@@ -272,7 +285,8 @@ async function startServer() {
         price: price !== undefined ? Number(price) : existing.price,
         cost: cost !== undefined ? Number(cost) : existing.cost,
         stock: stock !== undefined ? Number(stock) : existing.stock,
-        minRequiredStock: minRequiredStock !== undefined ? Number(minRequiredStock) : existing.minRequiredStock
+        minRequiredStock: minRequiredStock !== undefined ? Number(minRequiredStock) : existing.minRequiredStock,
+        region: region || existing.region || 'West'
       };
 
       serverDb.recomputeAnalytics();
@@ -307,7 +321,7 @@ async function startServer() {
   // CREATE Customer manually
   app.post('/api/customers', (req, res) => {
     try {
-      const { name, email, segment } = req.body;
+      const { name, email, segment, region, preferredCategory } = req.body;
       if (!name || !email) {
         return res.status(400).json({ error: 'Please populate customer name and email.' });
       }
@@ -329,7 +343,9 @@ async function startServer() {
         clv: 0,
         churnProbability: 5,
         rfmScore: '311',
-        cluster: 3
+        cluster: 3,
+        region: region || 'West',
+        preferredCategory: preferredCategory || 'Electronics'
       };
       
       serverDb.customers.unshift(newCustomer);

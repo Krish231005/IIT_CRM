@@ -251,6 +251,19 @@ TXN-90002,PROD-901,CUST-5002,STR-301,1,249.00,2026-05-25T12:00:15Z`
     setTimeout(() => setCopiedTemplate(false), 2000);
   };
 
+  const downloadSampleCSV = () => {
+    const csvContent = schemasInfo[selectedEntity].example;
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${selectedEntity}_sample_template.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // Ready Deliverable snippets
   const dockerComposeYaml = `version: "3.8"
 services:
@@ -700,13 +713,24 @@ def generate_holt_winters_forecast(series, steps=6):
                   </div>
                 </div>
 
-                <button
-                  onClick={copyTemplateToClipboard}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 border border-slate-800 text-[11px] font-mono font-bold text-slate-300 hover:text-white rounded-lg active:translate-y-0.25 duration-100 transition cursor-pointer"
-                >
-                  {copiedTemplate ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Terminal className="w-3.5 h-3.5 text-cyan-400" />}
-                  {copiedTemplate ? 'Copied Template!' : 'Copy Blank CSV Data'}
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={copyTemplateToClipboard}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 border border-slate-800 text-[11px] font-mono font-bold text-slate-300 hover:text-white rounded-lg active:translate-y-0.25 duration-100 transition cursor-pointer"
+                  >
+                    {copiedTemplate ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Terminal className="w-3.5 h-3.5 text-cyan-400" />}
+                    {copiedTemplate ? 'Copied Template!' : 'Copy Template'}
+                  </button>
+
+                  <button
+                    onClick={downloadSampleCSV}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-cyan-950/20 hover:bg-cyan-900/40 border border-cyan-500/20 text-[11px] font-mono font-bold text-cyan-400 hover:text-cyan-300 rounded-lg active:translate-y-0.25 duration-100 transition cursor-pointer"
+                    title="Download this schema template as a `.csv` file format ready to load"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    Download CSV
+                  </button>
+                </div>
               </div>
 
               <div className="space-y-3 text-left">
