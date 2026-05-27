@@ -756,7 +756,7 @@ export class RetailBIStore {
           productId: t.productId,
           type: 'Suspicious Night Purchase',
           severity: 'High',
-          description: `High value transaction ($${t.totalPrice.toLocaleString()}) logged at suspicious hours of ${hr}:${new Date(t.timestamp).getMinutes().toString().padStart(2, '0')} AM.`,
+          description: `High value transaction (₹${t.totalPrice.toLocaleString()}) logged at suspicious hours of ${hr}:${new Date(t.timestamp).getMinutes().toString().padStart(2, '0')} AM.`,
           timestamp: t.timestamp,
           status: 'Unresolved'
         });

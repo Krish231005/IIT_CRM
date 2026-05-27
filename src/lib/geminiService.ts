@@ -29,25 +29,27 @@ export async function askGeminiAboutAnalytics(userPrompt: string): Promise<strin
   const anomalies = serverDb.anomalies.filter(a => a.status === 'Unresolved');
 
   const contextStr = `
-You are the Executive AI Retail Consultant for Walmart, Amazon, and Target scale retail logistics operations.
-Here are the absolute real-time dashboard figures from our systems:
-- Store Total Revenue: $${summary.totalRevenue.toLocaleString()}
-- Total Profit Margin: ${summary.profitMargin}% (Net Profit: $${summary.totalProfit.toLocaleString()})
+You are the Executive AI Retail Consultant for Indian retail logistics operations.
+Here are the absolute real-time dashboard figures from our systems in Indian Rupees (₹):
+- Store Total Revenue: ₹${summary.totalRevenue.toLocaleString()}
+- Total Profit Margin: ${summary.profitMargin}% (Net Profit: ₹${summary.totalProfit.toLocaleString()})
 - Loyal Active Customers tracked: ${summary.totalCustomers}
 - Top 5 Products by Revenue:
-${summary.topProducts.map(p => `  * ${p.name} ($${p.revenue.toLocaleString()}, Volume: ${p.quantity})`).join('\n')}
+${summary.topProducts.map(p => `  * ${p.name} (₹${p.revenue.toLocaleString()}, Volume: ${p.quantity})`).join('\n')}
 - Regional Sales breakdown:
-${Object.entries(summary.regionPerformance).map(([r, s]) => `  * ${r}: $${s.toLocaleString()}`).join('\n')}
+${Object.entries(summary.regionPerformance).map(([r, s]) => `  * ${r}: ₹${s.toLocaleString()}`).join('\n')}
 - Category Revenue and Margins:
-${Object.entries(summary.categoryPerformance).map(([c, v]: [string, any]) => `  * ${c}: Revenue: $${v.revenue.toLocaleString()}, Net Profit: $${v.profit.toLocaleString()}`).join('\n')}
+${Object.entries(summary.categoryPerformance).map(([c, v]: [string, any]) => `  * ${c}: Revenue: ₹${v.revenue.toLocaleString()}, Net Profit: ₹${v.profit.toLocaleString()}`).join('\n')}
 - Critical Active Alerts & Stock Outliers:
 ${anomalies.map(a => `  * [${a.type} - Severity ${a.severity}] ${a.description}`).join('\n')}
 
 Guidelines:
-1. Provide extremely precise, expert, Walmart/Amazon/Target C-level executive insights.
-2. If the user asks a specific question, answer it directly using the figures above with actual numerical citations.
-3. Be helpful, strategic, actionable, and focus on supply-chain bottlenecks, inventory turnover, or regional growth strategies.
-4. Respond in professional Markdown format.
+1. Provide extremely precise, expert, enterprise C-level executive insights.
+2. Be extremely brief, concise, and point-to-point. No fluff or lengthy introductions/outros. Use simple, direct, high-impact bullet points. Keep the entire response very short and easy to digest.
+3. If the user asks a specific question, answer it directly and succinctly using the figures above with actual numerical citations.
+4. Be helpful, strategic, actionable, and focus on supply-chain bottlenecks, inventory turnover, or regional growth strategies.
+5. Respond in professional Markdown format.
+6. All currency figures MUST be written/formatted in Indian Rupees (₹, Rupee) only. Use the symbol "₹" instead of "$", and express all monetary citations in Indian Rupees (₹). Do NOT use dollars or '$'.
   `;
 
   // Check if API key is present
@@ -88,7 +90,7 @@ function generateLocalRuleBasedInsight(userPrompt: string): string {
 As the automated Business Intelligence router, I have processed your request: **"${userPrompt}"** across our active transactional schemas. Here are your strategic action items:
 
 1. **Revenue Operations Highlight**:
-   Our global store revenue sits at **$${summary.totalRevenue.toLocaleString()}** with a solid **${summary.profitMargin}%** net profit margin. Our top performing product is **${bestProd?.name}** representing **$${bestProd?.revenue.toLocaleString()}** in direct category contribution.
+   Our global store revenue sits at **₹${summary.totalRevenue.toLocaleString()}** with a solid **${summary.profitMargin}%** net profit margin. Our top performing product is **${bestProd?.name}** representing **₹${bestProd?.revenue.toLocaleString()}** in direct category contribution.
 
 2. **Supply Chain Optimization**:
    There are currently **${lowers.length}** catalog products falling below minimum safety parameters. Immediately target supply streams from our **${serverDb.suppliers.filter(s => s.reliabilityScore < 85).map(s => s.name).join(', ')}** lines to mitigate out-of-stock liabilities.
